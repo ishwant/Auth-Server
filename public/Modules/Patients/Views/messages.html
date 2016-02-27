@@ -1,0 +1,57 @@
+<div class="container" ng-controller="singlePatientCtrl" ng-init='getUrlParamtoViewPatient()'>
+    <h1 class="panel-heading" class="glyphicon glyphicon-add">PATIENT MESSAGES</h1>
+    
+    <div class="panel-body" ng-init="viewlistofPatientMessages()">
+        <table class="table" style="width: auto; margin-left: auto; margin-right: auto;">
+        <tr>
+            <td><label style="float:right">Patient Name:  </label></td>
+            <td><label>{{p_first_name}} {{p_last_name}}</label></td>
+        </tr>
+        <tr>
+            <td><label style="float:right">Date of Birth: </label></td>
+            <td><label>{{p_dob | date}}</label></td>
+        </tr>
+        <tr>
+            <td><label style="float:right">Program: </label></td>
+            <td><label>{{p_program.join(', ')}}</label></td>
+        </tr>
+        </table>   
+    </div>
+
+    <div align="left" style="padding-bottom: 12px; padding-right: 12px;">
+        <form class="form-inline">
+            <div class="form-group has-feedback">
+                <input type="text" ng-model="search" class="form-control" placeholder="Search">
+                    <i class="glyphicon glyphicon-search form-control-feedback"></i>
+            </div>
+        </form>
+    </div>
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th ng-click="sort('m_share_date')">Date
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='m_share_date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('m_message')">Message
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='m_message'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr dir-paginate="message in p_messages|orderBy:sortKey:reverse|filter:search|itemsPerPage:10">
+
+                    <td>{{message.m_share_date | date}}</td>
+                    <td>{{message.m_message}}</td>
+
+                    <td><a onClick="return confirm('Are you absolutely sure you want to delete?')" ng-click="deleteMessage(message)" class="glyphicon glyphicon-trash"></a></td>
+            </tbody>
+        </table> 
+        <dir-pagination-controls
+            max-size="10"
+            direction-links="true"
+            boundary-links="true" >
+        </dir-pagination-controls>
+    </div>
+</div>
+<!-- Ends Controller -->

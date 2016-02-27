@@ -1,0 +1,44 @@
+<div>
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+			</div>
+
+			<ul class="nav navbar-nav">
+				<li ng-class="{active:navbar.isSelected(1)}">
+					<a href="#/home" ng-click="navbar.selectedTab(1)">
+						<span class="glyphicon glyphicon-home" style="color: #0066ff"></span> 
+						<b>HOME</b>
+					</a>
+				</li>
+				<li ng-class="{active:navbar.isSelected(2)}">
+					<a href="#/CaseWorkers" ng-click="navbar.selectedTab(2)">
+						<span class="glyphicon glyphicon-user" style="color: #006dcc"></span>
+						<b>CASE WORKERS</b>
+					</a>
+				</li>
+			</ul>
+			
+			<ul class="nav navbar-nav navbar-right">
+				<li ng-class="{active:navbar.isSelected(3)}">
+					<a href="#/log-out" ng-click="navbar.selectedTab(3)">
+						<span class="glyphicon glyphicon-log-out" style="color: #006dcc"></span> 
+						<b>Logout</b>
+					</a>
+				</li>
+				<li ng-class="{active:navbar.isSelected(3)}">
+					<a href="#/login" ng-click="navbar.selectedTab(3)">
+						<span class="glyphicon glyphicon-log-in" style="color: #006dcc"></span> 
+						<b>Login</b>
+					</a>
+				</li>
+			</ul>
+		</div>
+    </nav>
+<br><br>
+<center>
+
+<div ng-view=""></div>
+
+</center>
+ </div>
