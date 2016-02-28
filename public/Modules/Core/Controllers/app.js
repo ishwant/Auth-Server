@@ -45,64 +45,116 @@
 		//PATIENTS
 		.when('/home', {
 			templateUrl: 'Modules/Patients/Views/home.html',
-			controller: 'allPatientsCtrl'
+			controller: 'allPatientsCtrl',
+			resolve: {
+				logincheck: checkLoggedin
+			}
 		})	
 		.when('/registerPatient', {
 			templateUrl: 'Modules/Patients/Views/registerPatient.html',
 			controller: 'singlePatientCtrl',
 			resolve: {
-				logincheck: checkLoggedin
+				logincheck: checkAdmin,
+				logincheck2: checkLoggedin
 			}
 		})
 		.when('/registrationDetails/:p_id', {
 			templateUrl: 'Modules/Patients/Views/registrationDetails.html',
-			controller: 'singlePatientCtrl'
+			controller: 'singlePatientCtrl',
+			resolve: {
+				logincheck: checkAdmin,
+				logincheck2: checkLoggedin
+			}
 		})
 		.when('/viewPatient/:p_id', {
 			templateUrl: 'Modules/Patients/Views/viewPatient.html',
-			controller: 'singlePatientCtrl'
+			controller: 'singlePatientCtrl',
+			resolve: {
+				logincheck: checkLoggedin
+			}
 		})
 		.when('/editPatient/:p_id', {
 			templateUrl: 'Modules/Patients/Views/editPatient.html',
-			controller: 'singlePatientCtrl'
+			controller: 'singlePatientCtrl',
+			resolve: {
+				logincheck: checkLoggedin
+			}
 		})
 
 		//CASE WORKERS
 		.when('/CaseWorkers', {
 			templateUrl: 'Modules/Case Workers/Views/c_home.html',
-			controller: 'allCaseWorkersCtrl'
+			controller: 'allCaseWorkersCtrl',
+			resolve: {
+				logincheck: checkAdmin,
+				logincheck2: checkLoggedin
+			}
 		})
 		.when('/registerCaseWorker', {
 			templateUrl: 'Modules/Case Workers/Views/registerCaseWorker.html',
-			controller: 'singleCaseWorkerCtrl'
+			controller: 'singleCaseWorkerCtrl',
+			resolve: {
+				logincheck: checkAdmin,
+				logincheck2: checkLoggedin
+			}
 		})
 		.when('/CaseWorkerRegistrationDetails/:c_id', {
 			templateUrl: 'Modules/Case Workers/Views/c_registrationDetails.html',
-			controller: 'singleCaseWorkerCtrl'
+			controller: 'singleCaseWorkerCtrl',
+			resolve: {
+				logincheck: checkAdmin,
+				logincheck2: checkLoggedin
+			}
 		})
 		.when('/viewCaseWorker/:c_id', {
 			templateUrl: 'Modules/Case Workers/Views/viewCaseWorker.html',
-			controller: 'singleCaseWorkerCtrl'
+			controller: 'singleCaseWorkerCtrl',
+			resolve: {
+				logincheck: checkAdmin,
+				logincheck2: checkLoggedin
+			}
 		})
 		.when('/editCaseWorker/:c_id', {
 			templateUrl: 'Modules/Case Workers/Views/editCaseWorker.html',
-			controller: 'singleCaseWorkerCtrl'
+			controller: 'singleCaseWorkerCtrl',
+			resolve: {
+				logincheck: checkAdmin,
+				logincheck2: checkLoggedin
+			}
 		})
 
 		.when('/viewPatientMessages/:p_id', {
 			templateUrl: 'Modules/Patients/Views/messages.html',
-			controller: 'singlePatientCtrl'
+			controller: 'singlePatientCtrl',
+			resolve: {
+				logincheck: checkLoggedin
+			}
 		})
 		.when('/viewPatientReport/:p_id', {
 			templateUrl: 'Modules/Patients/Views/report.html',
-			controller: 'singlePatientCtrl'
+			controller: 'singlePatientCtrl',
+			resolve: {
+				logincheck: checkLoggedin
+			}
 		})
 		.otherwise({
-			redirectTo: '/'
+			redirectTo: '/home'
 		});
 	})
 
 })();
+
+var app = angular.module('DiabetikApp');
+app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
+  $scope.logout = function() {
+    $http.post("/logout")
+      .success(function() {
+        $rootScope.currentUser = null;
+        $location.url("/");
+      });
+  }
+})
+
 
 var checkLoggedin = function($q, $timeout, $http, $location, $rootScope) {
   var deferred = $q.defer();
@@ -120,4 +172,27 @@ var checkLoggedin = function($q, $timeout, $http, $location, $rootScope) {
     }
   });
   return deferred.promise;
-}
+};
+
+var checkAdmin = function($q, $timeout, $http, $location, $rootScope) {
+  var deferred = $q.defer();
+
+  $http.get('/loggedin').success(function(user) {
+    $rootScope.errorMessage = null;
+    //User is Authenticated
+    if (user !== '0') {
+    	if(user.role=='admin'){
+    		$rootScope.currentUser = user;
+      		deferred.resolve();
+    	}    
+    	else{
+    		$location.url('/home');
+    	}  
+    } else { //User is not Authenticated
+      $rootScope.errorMessage = 'You need to log in.';
+      deferred.reject();
+      $location.url('/login');
+    }
+  });
+  return deferred.promise;
+};

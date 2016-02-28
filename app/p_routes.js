@@ -1,27 +1,51 @@
-module.exports = function(app) {
+module.exports = function(app, passport) {
 	var User            = require('./models/user.js');
 	var program            = require('./models/program.js');
+	var cw 				= require('./models/case_worker.js')
 
 	//===============GET ALL PATIENT RECORDS===========================
 
-	app.get('/patients', function(req, res) {
+	app.get('/patients', auth, function(req, res) {
 
-		User.find(function(err, users) {
+		if(req.user.role == 'admin'){
+			User.find(function(err, users) {
 
-
-			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
-			if (err)
-				res.send(err);
-
-			res.json(users); // return all todos in JSON format
-		});
+				console.log('/patients req.user %s',req.user.username);
+				// if there is an error retrieving, send the error. nothing after res.send(err) will execute
+				if (err)
+					res.send(err);
+	
+				res.json(users); // return all todos in JSON format
+			});
+		}
+		else {
+			cw.findOne({c_id: req.user.unique_ID}, function(err, cwfound) {
+				if(cwfound){
+					var caseworker = cwfound.c_first_name+' '+cwfound.c_last_name+' (ID = '+cwfound.c_id+')';
+					console.log('caseworker to find: %s', caseworker);
+					var cwfind = cwfound.c_id;
+				//db.inventory.find( { tags: { $in: [ /^be/, /^st/ ] } } )
+				//	User.find({p_case_worker:caseworker}, function(err, users){
+				//	db.users.find({"username": {'$regex' : '.*' + 'Son' + '.*'}})
+					User.find({p_case_worker:{'$regex' : '.*' + cwfind + '.*'}}, function(err, users){
+						if (err)
+							res.send(err);
+						console.log('found cw patient');
+						res.json(users); // return all todos in JSON format
+					});
+				}
+			//	res.send(err);
+			});
+		}
+		
 	});	
 
 	//================REGISTER NEW PATIENT=============================
 
-	app.post('/registerPatient', function(req, res) {
+	app.post('/registerPatient',auth, function(req, res) {
 		var newPatient = new User();
 
+		console.log(req.body.p_case_worker);
 		newPatient.p_id = req.body.p_id;
 		newPatient.p_first_name = req.body.p_first_name;
 		newPatient.p_last_name = req.body.p_last_name;
@@ -52,11 +76,11 @@ module.exports = function(app) {
 					res.json({message: 'New Patient Registered'});
 				});
 			}
-		});
+		}); 
 	});	
 
 	//================VIEW ONE PATIENT RECORD=========================
-	app.get('/viewPatient/:p_id', function(req, res) {
+	app.get('/viewPatient/:p_id',auth, function(req, res) {
 		var patient_id = req.params.p_id;
 		User.findOne({p_id: patient_id}, function(err,found){
 			if(err){
@@ -76,7 +100,7 @@ module.exports = function(app) {
 
 	//================UPDATE PATIENT RECORD=============================
 
-	app.put('/editPatient/:p_id', function(req, res) {
+	app.put('/editPatient/:p_id',auth, function(req, res) {
 		
 		var patient_id = req.params.p_id;
 		User.findOne({p_id: patient_id}, function(err,found){
@@ -121,7 +145,7 @@ module.exports = function(app) {
 
 	//================DEACTIVATE PATIENT PROFILE=============================
 
-	app.put('/togglePatientStatus/:p_id', function(req, res) {
+	app.put('/togglePatientStatus/:p_id',auth, function(req, res) {
 		
 		var patient_id = req.params.p_id;
 		User.findOne({p_id: patient_id}, function(err,found){
@@ -151,7 +175,7 @@ module.exports = function(app) {
 
 	//================CHECK UNIQUE PATIENT ID=========================
 
-	app.get('/uniqueIdCheck/:test_id', function(req, res) {
+	app.get('/uniqueIdCheck/:test_id',auth, function(req, res) {
 		//console.log(req.params);
 		var p_idtoTest = req.params.test_id;
 		console.log(p_idtoTest);
@@ -173,7 +197,7 @@ module.exports = function(app) {
 
 	//================DELETE A MESSAGE=============================
 
-	app.delete('/deleteMessage/:p_id/:m_id', function(req, res) {
+	app.delete('/deleteMessage/:p_id/:m_id',auth, function(req, res) {
 		
 		var patient_id = req.params.p_id;
 		var message_id = req.params.m_id;
@@ -220,7 +244,7 @@ module.exports = function(app) {
     //=============HANDLING PROGRAMS================================
 
     //GET ALL PROGRAMS
-    app.get('/programs', function(req, res) {
+    app.get('/programs',auth, function(req, res) {
 
 		program.find(function(err, prgm) {
 
@@ -233,7 +257,7 @@ module.exports = function(app) {
 	});	
 
     //ADD NEW PROGRAM
-    app.post('/programs', function(req, res) {
+    app.post('/programs',auth, function(req, res) {
 		var newProgram = new program();
 
 		newProgram.programName = req.body.programName;
@@ -253,3 +277,13 @@ module.exports = function(app) {
 	});	
 
 };
+
+var auth = function(req, res, next) {
+  if (!req.isAuthenticated())
+    res.send(401);
+  else
+    next();
+}
+
+
+

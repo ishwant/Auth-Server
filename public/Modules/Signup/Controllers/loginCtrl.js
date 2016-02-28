@@ -1,6 +1,6 @@
 var app = angular.module('DiabetikApp');
 
-app.controller("loginCtrl", function($scope, $http, $rootScope){
+app.controller("loginCtrl", function($scope, $http, $rootScope, $location){
 	$scope.login = function(user){
 		console.log(user);
 
@@ -8,6 +8,7 @@ app.controller("loginCtrl", function($scope, $http, $rootScope){
 		.success(function(response){
 			console.log(response);
 			$rootScope.currentUser = response;
+			$location.url("/home");
 		}); 
 	} 
 });

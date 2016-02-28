@@ -184,7 +184,7 @@
     </div>
 
     <!-- Patient's Case worker: Required -->
-    <div class="form-group" ng-class="{ 'has-error' : editPatientProfileForm.case_worker.$invalid && !editPatientProfileForm.case_worker.$pristine }">
+    <div ng-if="currentUser.role.indexOf('admin') > -1" class="form-group" ng-class="{ 'has-error' : editPatientProfileForm.case_worker.$invalid && !editPatientProfileForm.case_worker.$pristine }" >
 
         <label class="control-label col-sm-2" for="case_worker" >* Case Worker:</label>
 

@@ -1,6 +1,6 @@
 var app = angular.module('DiabetikApp');
 
-app.controller("signupCtrl", function($scope, $http){
+app.controller("signupCtrl", function($location, $scope, $http, $rootScope){
 	$scope.signup = function(user){
 		console.log(user);
 
@@ -9,6 +9,7 @@ app.controller("signupCtrl", function($scope, $http){
 			.success(function(user){
 				console.log(user);
 				$rootScope.currentUser = user;
+				$location.url("/home");
 			}); 
 		}
 		

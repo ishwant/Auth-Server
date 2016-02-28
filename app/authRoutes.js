@@ -2,7 +2,7 @@
 module.exports = function(app, passport) {
 
     var authUser    = require('../app/models/authUser.js');
-    var User        = require('../app/models/user.js');
+    var User        = require('../app/models/case_worker.js');
 
     app.post("/login", passport.authenticate('local'), function(req,res){
         console.log("/login");
@@ -18,8 +18,8 @@ module.exports = function(app, passport) {
                 console.log("username taken");
             }
             else{
-                User.findOne([{'p_token': req.body.token},{'p_email': req.body.email}], function(err,p_user){
-                    if(p_user){
+                User.findOne([{'c_token': req.body.token},{'c_email': req.body.email}], function(err,c_user){
+                    if(c_user){
                         console.log('User with similar details already exists!');
                         var newUser = new authUser();
 
@@ -27,6 +27,7 @@ module.exports = function(app, passport) {
                         newUser.username    = req.body.username;
                         newUser.password = newUser.generateHash(req.body.password1);
                         newUser.role = 'CW';
+                        newUser.unique_ID = c_user.c_id;
         
                         // save the user
                         newUser.save(function(err, user) {
@@ -52,7 +53,7 @@ module.exports = function(app, passport) {
     });
 
     app.post("/logout", function(req,res){
-        req.logOut();
+        req.logout();
         res.send(200);
     });
 };

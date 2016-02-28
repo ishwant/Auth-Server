@@ -159,7 +159,7 @@
                 <span class="glyphicon glyphicon-pencil"></span> Edit
             </button>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3" ng-if="currentUser.role.indexOf('admin') > -1">
             <button ng-if="patient.p_active == true" class="btn btn-primary" style="padding: 5px 10px;" ng-click="togglePatientStatus(patient)">
                 <span class="glyphicon glyphicon-ban-circle" ></span> De-Activate
             </button>

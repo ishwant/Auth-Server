@@ -46,7 +46,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 // routes ======================================================================
 //require('./app/routes_passport.js')(app, passport); // load our routes and pass in our app and fully configured passport
 require('./app/routes.js')(app); // configure our routes
-require('./app/p_routes.js')(app); //patient info related routes
+require('./app/p_routes.js')(app, passport); //patient info related routes
 require('./app/c_routes.js')(app); //CaseWorker info related routes
 require('./app/authRoutes.js')(app, passport); //CaseWorker info related routes
 

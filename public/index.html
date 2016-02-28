@@ -13,7 +13,8 @@
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
     <style>
-        body { padding-top:80px; }
+
+
         .jumbotron {
             background-color:#79a9d2;
         }
@@ -92,49 +93,71 @@
     </style>
 </head>
 <body>
-    <img src="img/G2L MOBILE BUDDY.PNG" 
+    <!-- logo image -->
+ <!--   <a ng-if="currentUser" href= "#/home">
+        <img src="img/G2L MOBILE BUDDY.PNG" 
          height="62" width="80" 
-         style="position:fixed; top:10px; left:10px;"> 
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-           <!--     <a class="navbar-brand">
-                    <img alt = "brand" src="img/G2L MOBILE BUDDY.PNG" height="62" width="80" > 
-                </a> -->
-            </div>
+         style="position:fixed; top:10px; left:10px;">
+     </a> -->
+     <a ng-if="!currentUser" href= "#/">
+        <img src="img/G2L MOBILE BUDDY.PNG" 
+         height="62" width="80" 
+         style="position:fixed; top:10px; left:10px;">
+     </a> 
 
-            <ul class="nav navbar-nav">
-                <li ng-class="{active:navbar.isSelected(1)}">
-                    <a href="#/home" ng-click="navbar.selectedTab(1)">
-                        <span class="glyphicon glyphicon-home" style="color: #0066ff"></span> 
-                        <b>HOME</b>
-                    </a>
-                </li>
-                <li ng-class="{active:navbar.isSelected(2)}">
-                    <a href="#/CaseWorkers" ng-click="navbar.selectedTab(2)">
-                        <span class="glyphicon glyphicon-user" style="color: #006dcc"></span>
-                        <b>CASE WORKERS</b>
-                    </a>
-                </li>
-            </ul>
-            
-            <ul class="nav navbar-nav navbar-right">
-                <li ng-class="{active:navbar.isSelected(3)}">
-                    <a href="#/log-out" ng-click="navbar.selectedTab(3)">
-                        <span class="glyphicon glyphicon-log-out" style="color: #006dcc"></span> 
-                        <b>Logout</b>
-                    </a>
-                </li>
-                <li ng-class="{active:navbar.isSelected(3)}">
-                    <a href="#/login" ng-click="navbar.selectedTab(3)">
-                        <span class="glyphicon glyphicon-log-in" style="color: #006dcc"></span> 
-                        <b>Login</b>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    
+    <!-- Nav bar start -->
+    <span ng-show="currentUser">
+        <nav class="navbar navbar-inverse" ng-controller="NavCtrl">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                </div>
+                
+                <ul class="nav navbar-nav">
+                    <li ng-class="{active:navbar.isSelected(1)}">
+                        <a href="#/home" ng-click="navbar.selectedTab(1)">
+                            <span class="glyphicon glyphicon-home" style="color: #0066ff"></span> 
+                            <b>HOME</b>
+                        </a>
+                    </li>
+
+                    <!-- Only Admin -->
+                    <div ng-if="currentUser.role.indexOf('admin') > -1">
+                        <li ng-class="{active:navbar.isSelected(2)}">
+                            <a href="#/CaseWorkers" ng-click="navbar.selectedTab(2)">
+                                <span class="glyphicon glyphicon-user" style="color: #006dcc"></span>
+                                <b>CASE WORKERS</b>
+                            </a>
+                        </li>
+                    </div>
+                    <div ng-if="currentUser.role.indexOf('admin') > -1">
+                        <li ng-class="{active:navbar.isSelected(3)}">
+                            <a href="#/programs" ng-click="navbar.selectedTab(3)">
+                                <span class="glyphicon glyphicon-th-list" style="color: #006dcc"></span>
+                                <b>PROGRAMS</b>
+                            </a>
+                        </li>
+                    </div>
+                    <div ng-if="currentUser.role.indexOf('admin') > -1">
+                        <li ng-class="{active:navbar.isSelected(4)}">
+                            <a href="#/admins" ng-click="navbar.selectedTab(4)">
+                                <span class="glyphicon glyphicon-king" style="color: #006dcc"></span>
+                                <b>ADMINS</b>
+                            </a>
+                        </li>
+                    </div>
+                </ul>
+                
+                <ul class="nav navbar-nav navbar-right">
+                    <li ng-class="{active:navbar.isSelected(5)}">
+                        <a ng-click="logout()">
+                            <b>Logout</b>
+                            <span class="glyphicon glyphicon-log-out" style="color: #006dcc"></span> 
+                        </a>
+                    </li>
+                </ul>                
+            </div>
+        </nav>
+    </span>
     <center>
         <div ng-view=""></div>
     </center>

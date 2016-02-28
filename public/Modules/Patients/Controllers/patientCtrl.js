@@ -16,7 +16,8 @@
     app.controller('allPatientsCtrl', [
         '$scope', 
         '$http', 
-        function($scope, $http) {
+        '$rootScope',
+        function($scope, $http, $rootScope) {
 
             $scope.getAllPatients = function() {
 
@@ -27,6 +28,7 @@
                     console.log(data);
 
                     $scope.users = data;
+                    console.log($rootScope.currentUser);
                 });
             };  
             $scope.sort = function(keyname){
