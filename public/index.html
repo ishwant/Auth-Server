@@ -113,42 +113,37 @@
                 </div>
                 
                 <ul class="nav navbar-nav">
-                    <li ng-class="{active:navbar.isSelected(1)}">
-                        <a href="#/home" ng-click="navbar.selectedTab(1)">
+                    <li ng-class="{active: isActive('/home')}">
+                        <a href="#/home">
                             <span class="glyphicon glyphicon-home" style="color: #0066ff"></span> 
                             <b>HOME</b>
                         </a>
                     </li>
 
                     <!-- Only Admin -->
-                    <div ng-if="currentUser.role.indexOf('admin') > -1">
-                        <li ng-class="{active:navbar.isSelected(2)}">
-                            <a href="#/CaseWorkers" ng-click="navbar.selectedTab(2)">
-                                <span class="glyphicon glyphicon-user" style="color: #006dcc"></span>
-                                <b>CASE WORKERS</b>
-                            </a>
-                        </li>
-                    </div>
-                    <div ng-if="currentUser.role.indexOf('admin') > -1">
-                        <li ng-class="{active:navbar.isSelected(3)}">
-                            <a href="#/programs" ng-click="navbar.selectedTab(3)">
-                                <span class="glyphicon glyphicon-th-list" style="color: #006dcc"></span>
-                                <b>PROGRAMS</b>
-                            </a>
-                        </li>
-                    </div>
-                    <div ng-if="currentUser.role.indexOf('admin') > -1">
-                        <li ng-class="{active:navbar.isSelected(4)}">
-                            <a href="#/admins" ng-click="navbar.selectedTab(4)">
-                                <span class="glyphicon glyphicon-king" style="color: #006dcc"></span>
-                                <b>ADMINS</b>
-                            </a>
-                        </li>
-                    </div>
+                    <li ng-if="currentUser.role.indexOf('admin') > -1" ng-class="{ active: isActive('/CaseWorkers')}">
+                        <a href="#/CaseWorkers" ng-click="navbar.selectedTab(2)">
+                            <span class="glyphicon glyphicon-user" style="color: #006dcc"></span>
+                            <b>CASE WORKERS</b>
+                        </a>
+                    </li>
+                    <li ng-if="currentUser.role.indexOf('admin') > -1" ng-class="{ active: isActive('/programs')}">
+                        <a href="#/programs" ng-click="navbar.selectedTab(3)">
+                            <span class="glyphicon glyphicon-th-list" style="color: #006dcc"></span>
+                            <b>PROGRAMS</b>
+                        </a>
+                    </li>
+                    <li ng-if="currentUser.role.indexOf('admin') > -1" ng-class="{ active: isActive('/admins')}">
+                        <a href="#/admins" ng-click="navbar.selectedTab(4)">
+                            <span class="glyphicon glyphicon-king" style="color: #006dcc"></span>
+                            <b>ADMINS</b>
+                        </a>
+                    </li>
+
                 </ul>
                 
                 <ul class="nav navbar-nav navbar-right">
-                    <li ng-class="{active:navbar.isSelected(5)}">
+                    <li>
                         <a ng-click="logout()">
                             <b>Logout</b>
                             <span class="glyphicon glyphicon-log-out" style="color: #006dcc"></span> 
@@ -187,7 +182,7 @@
     <script src="Modules/Patients/Controllers/dirPagination.js"></script>
     <script src="Modules/Signup/Controllers/loginCtrl.js"></script>
     <script src="Modules/Signup/Controllers/signupCtrl.js"></script>
-
+    <script src="Modules/Programs/Controllers/programCtrl.js"></script>
 
     <script src="Modules/Case Workers/Controllers/caseWorkerCtrl.js"></script>
 

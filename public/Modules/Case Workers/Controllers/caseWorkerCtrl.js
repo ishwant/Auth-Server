@@ -16,7 +16,8 @@
     app.controller('allCaseWorkersCtrl', [
         '$scope', 
         '$http', 
-        function($scope, $http) {
+        '$rootScope',
+        function($scope, $http, $rootScope) {
 
             $scope.getAllCaseWorkers = function() {
 
@@ -24,10 +25,61 @@
                 console.log('hello');
                 
                 $http.get(url).success(function(data) {
-                    console.log(data);
+                //    console.log(data);
                     $scope.users = data;
                 });
             };  
+            $scope.getOnlyCaseWorkers = function() {
+
+                var url = '/OnlyCaseWorkers/';
+                console.log('hello');
+
+                $http.get(url).success(function(data) {
+                    $scope.authcw = data;
+                    console.log('authcw: %j', $scope.authcw);
+                });
+
+            };
+            $scope.addNewAdmin = function(admin) {
+
+                var url = '/addAdmin/';
+                console.log('hello');
+                console.log(admin);
+                var array = admin.split(':');
+                var idtowork = array[1];
+                array = idtowork.split(')');
+                idtowork = array[0];
+                idtowork = idtowork.trim();
+                console.log(idtowork);
+                var url = '/addAdmin/'+ idtowork;
+                $http.put(url).success(function(data) {
+                    console.log(data);
+                    $scope.getOnlyCaseWorkers();
+                    $scope.getAllAdmins();
+                }); 
+            }; 
+            $scope.getAllAdmins = function() {
+
+                var url = '/OnlyAdmins/';
+                console.log('hello');
+
+                $http.get(url).success(function(data) {
+                    $scope.admins = data;
+                    console.log('admins: %j', $scope.admins);
+                });
+            }; 
+            $scope.removeAdmin = function(adminID) {
+
+                var url = '/removeAdmin/'+adminID;
+                console.log('hello');
+
+                $http.put(url).success(function(data) {
+                    console.log(data);
+                    $scope.getAllAdmins();
+                    $scope.getOnlyCaseWorkers();
+                }); 
+            }; 
+
             $scope.sort = function(keyname){
                 $scope.sortKey = keyname;   //set the sortKey to the param passed
                 $scope.reverse = !$scope.reverse; //if true make it false and vice versa

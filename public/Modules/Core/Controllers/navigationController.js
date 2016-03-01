@@ -11,19 +11,19 @@
 // wrapping your javascript in closure is a good habit
 (function(){
 
-	var app = angular.module('DiabetikApp');
-	
-	// controls the behaviour of our navigation bar
-	app.controller('NavbarCtrl', function() {
-		this.tab = 1;
-		
-		this.selectedTab = function(setTab) {
-			this.tab = setTab;
-		};
-		
-		this.isSelected = function(checkTab) {
-			return this.tab === checkTab;
-		};
-	});
-	
+var app = angular.module('DiabetikApp');
+
+	app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
+	  	$scope.logout = function() {
+	   		$http.post("/logout")
+	     		.success(function() {
+	       		$rootScope.currentUser = null;
+	       		$location.url("/");
+	     		});
+	  	};
+	   	$scope.isActive = function (viewLocation) { 
+	       	var active = (viewLocation === $location.path());
+     		return active;
+	   	};
+	});	
 })();
