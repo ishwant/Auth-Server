@@ -293,50 +293,5 @@
             }
         }
     ]);
-
-    //====================CONTROLLER FOR PROGRAMS===============
-
-    //MODAL
-
-    
-
-    //MODAL END
-
-
-    app.controller('programCtrl', [
-        '$scope', 
-        '$http', 
-        function($scope, $http) {
-
-            $scope.getAllPrograms = function() {
-
-                var url = '/programs/';
-                console.log('hello');
-                
-                $http.get(url).success(function(data) {
-                    console.log(data);
-                    $scope.programs = data;
-                });
-            };  
-            $scope.addNewProgram = function(program) {
-
-                var url = '/programs/';
-                console.log(program);
-                $scope.go = false;
-                if(program){
-                    $scope.go = true;
-                }
-                if($scope.go){
-
-                    $http.post(url, program).success(function(response, status, headers, config){
-                    console.log('success');
-                    }).error(function(response, status, headers, config){
-                        $scope.error_message = response.error_message;
-                    });
-                } 
-                
-            }; 
-        }
-    ]); 
     
 })();

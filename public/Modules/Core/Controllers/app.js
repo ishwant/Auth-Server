@@ -137,24 +137,28 @@
 				logincheck: checkLoggedin
 			}
 		})
+		//programs
+		.when('/programs', {
+			templateUrl: 'Modules/Programs/Views/programs.html',
+			controller: 'programCtrl',
+			resolve: {
+				logincheck: checkAdmin
+			}
+		})
+		//Admins
+		.when('/admins', {
+			templateUrl: 'Modules/Case Workers/Views/admins.html',
+			controller: 'singleCaseWorkerCtrl',
+			resolve: {
+				logincheck: checkAdmin
+			}
+		})
 		.otherwise({
 			redirectTo: '/home'
 		});
 	})
 
 })();
-
-var app = angular.module('DiabetikApp');
-app.controller("NavCtrl", function($rootScope, $scope, $http, $location) {
-  $scope.logout = function() {
-    $http.post("/logout")
-      .success(function() {
-        $rootScope.currentUser = null;
-        $location.url("/");
-      });
-  }
-})
-
 
 var checkLoggedin = function($q, $timeout, $http, $location, $rootScope) {
   var deferred = $q.defer();

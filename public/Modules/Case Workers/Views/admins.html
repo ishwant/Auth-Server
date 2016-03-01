@@ -1,0 +1,87 @@
+<div class="container" ng-controller="allCaseWorkersCtrl" ng-init="getOnlyCaseWorkers()">
+	<br/>
+	<h1 class="panel-heading" class="glyphicon glyphicon-add">ADMIN MANAGEMENT</h1>
+	<br/><br/><br/><br/>
+	<form class="form-inline">
+  		<div class="form-group">
+            <select class="form-control"
+                    ng-model="unique_ID" 
+                    ng-change="changeValue(unique_ID)"
+                    ng-value="auth.unique_ID"
+                    id="unique_ID"
+                    name="unique_ID">
+                <option>----Please select----</option>
+                <option ng-repeat="auth in authcw">{{auth.first_name}} {{auth.last_name}} (ID : {{auth.unique_ID}}) </option>
+            </select>
+    	</div>
+
+    	<br></br>
+  		<div class="form-actions">
+  			<button type="submit" ng-click="addNewAdmin(unique_ID)" class="btn btn-primary" style="float:center">Add Admin</button>
+  		</div>
+	</form>
+
+	<br/><br/>
+
+        <table class="table table-bordered table-striped table-hover" ng-init="getAllAdmins()">
+            <thead>
+                <tr>         
+                    <th ng-click="sort('unique_ID')">ID
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='unique_ID'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('first_name')">First Name
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='first_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('last_name')">Last Name
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='last_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr dir-paginate="admin in admins|orderBy:sortKey:reverse|itemsPerPage:15">
+                	<td>{{admin.unique_ID}}</td>
+                    <td>{{admin.first_name}}</td>
+                    <td>{{admin.last_name}}</td>
+                    <td><a ng-click="removeAdmin(admin.unique_ID)" class="glyphicon glyphicon-remove-circle"></a></td>
+
+                </tr>
+            </tbody>
+        </table> 
+        <dir-pagination-controls
+            max-size="15"
+            direction-links="true"
+            boundary-links="true" >
+        </dir-pagination-controls>
+<!-- <div class="row">
+			<div class="col-sm-4 col-sm-offset-4">
+
+				<div class="checkbox" ng-repeat="program in programs">
+					<label>
+						<input type="checkbox" ng-click=""> {{ program.programName }}
+					</label>
+				</div>
+
+				<p class="text-center" ng-show="loading">
+					<span class="fa fa-spinner fa-spin fa-3x"></span>
+				</p>
+
+			</div> 
+		</div> -->
+
+		<!-- FORM TO CREATE TODOS 
+		<div id="todo-form" class="row">
+			<div class="col-sm-8 col-sm-offset-2 text-center">
+				<form>
+					<div class="form-group">
+
+						BIND THIS VALUE TO formData.text IN ANGULAR 
+						<input type="text" class="form-control input-lg text-center" placeholder="I want to buy a puppy that will love me forever" ng-model="formData.text">
+					</div>
+
+					 createToDo() WILL CREATE NEW TODOS 
+					<button type="submit" class="btn btn-primary btn-lg" ng-click="createTodo()">Add</button>
+				</form>
+			</div>
+		</div> -->
+</div>

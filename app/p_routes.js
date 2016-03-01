@@ -1,7 +1,9 @@
+var User            = require('./models/user.js');
+var program            = require('./models/program.js');
+var cw 				= require('./models/case_worker.js');
+
 module.exports = function(app, passport) {
-	var User            = require('./models/user.js');
-	var program            = require('./models/program.js');
-	var cw 				= require('./models/case_worker.js')
+	
 
 	//===============GET ALL PATIENT RECORDS===========================
 
@@ -27,7 +29,7 @@ module.exports = function(app, passport) {
 				//db.inventory.find( { tags: { $in: [ /^be/, /^st/ ] } } )
 				//	User.find({p_case_worker:caseworker}, function(err, users){
 				//	db.users.find({"username": {'$regex' : '.*' + 'Son' + '.*'}})
-					User.find({p_case_worker:{'$regex' : '.*' + cwfind + '.*'}}, function(err, users){
+					User.find({p_case_worker: caseworker}, function(err, users){
 						if (err)
 							res.send(err);
 						console.log('found cw patient');
@@ -245,23 +247,15 @@ module.exports = function(app, passport) {
 
     //GET ALL PROGRAMS
     app.get('/programs',auth, function(req, res) {
-
-		program.find(function(err, prgm) {
-
-			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
-			if (err)
-				res.send(err)
-
-			res.json(prgm); // return all todos in JSON format
-		});
+    	getprgms(res);		
 	});	
 
     //ADD NEW PROGRAM
     app.post('/programs',auth, function(req, res) {
 		var newProgram = new program();
-
-		newProgram.programName = req.body.programName;
-		newProgram.programAlias = req.body.programAlias;
+		console.log('printing body %s', req.body);
+		newProgram.programName = req.body.name;
+		newProgram.programAlias = req.body.alias;
 		
 		program.findOne({programName: newProgram.programName}, function(err,found){
 			if(found==null){
@@ -270,13 +264,39 @@ module.exports = function(app, passport) {
 						console.log(err);
 						res.send(err);
 					}
-					res.json({message: 'New Program Saved'});
+					getprgms(res);
+					
 				});
 			}
 		});
 	});	
+	app.delete('/program/:programID',auth, function(req, res) {
+		
+		console.log('printing body %j', req.body);
+		var program_id = req.params.programID;
+
+		program.findByIdAndRemove(program_id, function(err) {
+		
+			if (err)
+			{ 
+				console.log(err);
+				res.send(err);
+			}
+			getprgms(res);
+		});
+	});
 
 };
+function getprgms(res){
+	program.find(function(err, prgm) {
+
+			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
+			if (err)
+				res.send(err)
+
+			res.json(prgm); // return all todos in JSON format
+		});
+}
 
 var auth = function(req, res, next) {
   if (!req.isAuthenticated())

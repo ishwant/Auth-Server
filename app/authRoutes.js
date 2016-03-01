@@ -18,7 +18,9 @@ module.exports = function(app, passport) {
                 console.log("username taken");
             }
             else{
-                User.findOne([{'c_token': req.body.token},{'c_email': req.body.email}], function(err,c_user){
+                console.log('req.body.token: %s', req.body.token);
+                console.log('req.body.email: %s', req.body.email);
+                User.findOne({'c_token': req.body.token,'c_email': req.body.email}, function(err,c_user){
                     if(c_user){
                         console.log('User with similar details already exists!');
                         var newUser = new authUser();
@@ -28,6 +30,8 @@ module.exports = function(app, passport) {
                         newUser.password = newUser.generateHash(req.body.password1);
                         newUser.role = 'CW';
                         newUser.unique_ID = c_user.c_id;
+                        newUser.first_name = c_user.c_first_name;
+                        newUser.last_name = c_user.c_last_name;
         
                         // save the user
                         newUser.save(function(err, user) {

@@ -1,9 +1,9 @@
 module.exports = function(app) {
 	var caseWorker            = require('./models/case_worker.js');
-
+	var authUser    = require('../app/models/authUser.js');
 	//===============GET ALL caseWorker RECORDS===========================
 
-	app.get('/CaseWorkers', function(req, res) {
+	app.get('/CaseWorkers', auth, function(req, res) {
 
 		caseWorker.find(function(err, caseWorkers) {
 
@@ -14,10 +14,25 @@ module.exports = function(app) {
 			res.json(caseWorkers); // return all todos in JSON format
 		});
 	});	
+	app.get('/OnlyCaseWorkers', auth, function(req, res) {
+
+		authUser.find({role:"CW"},{unique_ID:1, first_name:2, last_name:3},function(err,users){
+			console.log(users);
+			res.json(users);
+		});		
+	});	
+	app.get('/OnlyAdmins', auth, function(req, res) {
+
+		authUser.find({role:"admin"},{unique_ID:1, first_name:2, last_name:3},function(err,users){
+			console.log(users);
+			res.json(users);
+		});		
+	});	
+
 
 	//================REGISTER NEW caseWorker=============================
 
-	app.post('/registerCaseWorker', function(req, res) {
+	app.post('/registerCaseWorker', auth,function(req, res) {
 		var newcaseWorker = new caseWorker();
 
 		newcaseWorker.c_id = req.body.c_id;
@@ -46,7 +61,7 @@ module.exports = function(app) {
 	});	
 
 	//================VIEW ONE caseWorker RECORD=========================
-	app.get('/viewCaseWorker/:c_id', function(req, res) {
+	app.get('/viewCaseWorker/:c_id',auth, function(req, res) {
 		var caseWorker_id = req.params.c_id;
 		caseWorker.findOne({c_id: caseWorker_id}, function(err,found){
 			if(err){
@@ -66,7 +81,7 @@ module.exports = function(app) {
 
 	//================UPDATE caseWorker RECORD=============================
 
-	app.put('/editCaseWorker/:c_id', function(req, res) {
+	app.put('/editCaseWorker/:c_id', auth,function(req, res) {
 		
 		var caseWorker_id = req.params.c_id;
 		caseWorker.findOne({c_id: caseWorker_id}, function(err,found){
@@ -98,10 +113,44 @@ module.exports = function(app) {
 			};
 		});
 	});	
+	app.put('/addAdmin/:uniqueID', auth, function(req, res) {
+
+		var uniqueID = req.params.uniqueID;
+
+		authUser.findOne({unique_ID: uniqueID}, function(err, user){
+			if (err)
+				res.send(err);
+
+			user.role="admin";
+			user.save(function(err){
+				if(err){
+					res.send(err);
+				}
+				res.send({message: "admin added"});
+			});
+		});
+	});	
+	app.put('/removeAdmin/:uniqueID', auth, function(req, res) {
+
+		var uniqueID = req.params.uniqueID;
+
+		authUser.findOne({unique_ID: uniqueID}, function(err, user){
+			if (err)
+				res.send(err);
+
+			user.role="CW";
+			user.save(function(err){
+				if(err){
+					res.send(err);
+				}
+				res.send({message: "admin added"});
+			});
+		});
+	});	
 
 	//================DEACTIVATE caseWorker PROFILE=============================
 
-	app.put('/toggleCaseWorkerStatus/:c_id', function(req, res) {
+	app.put('/toggleCaseWorkerStatus/:c_id', auth,function(req, res) {
 		
 		var caseWorker_id = req.params.c_id;
 		caseWorker.findOne({c_id: caseWorker_id}, function(err,found){
@@ -131,7 +180,7 @@ module.exports = function(app) {
 
 	//================CHECK UNIQUE caseWorker ID=========================
 
-	app.get('/caseWorkerUniqueIdCheck/:test_id', function(req, res) {
+	app.get('/caseWorkerUniqueIdCheck/:test_id',auth, function(req, res) {
 		//console.log(req.params);
 		var c_idtoTest = req.params.test_id;
 		console.log(c_idtoTest);
@@ -174,3 +223,10 @@ module.exports = function(app) {
     };
 
 };
+
+var auth = function(req, res, next) {
+  if (!req.isAuthenticated())
+    res.send(401);
+  else
+    next();
+}
