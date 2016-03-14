@@ -9,11 +9,11 @@
         </tr>
         <tr>
             <td><label style="float:right">Date of Birth: </label></td>
-            <td><label>{{p_dob}}</label></td>
+            <td><label>{{p_dob | date}}</label></td>
         </tr>
         <tr>
             <td><label style="float:right">Program: </label></td>
-            <td><label>{{p_program}}</label></td>
+            <td><label>{{p_program.join(', ')}}</label></td>
         </tr>
         </table>   
     </div>
@@ -24,15 +24,15 @@
                 <input type="text" ng-model="searchText" class="form-control" placeholder="Search"> 
                     <i class="glyphicon glyphicon-search form-control-feedback"></i>
             </div>
-        <!--    <input class="btn btn-primary" onclick="$('#reportTable').tableExport({type:'pdf',escape:'false'});" role="button" value="Export">   
-                <input class="btn btn-primary" ng-click='generatePdf(p_event_entries)' value="Export"> -->
-                <input class="btn btn-primary" ng-csv="p_event_entries" csv-header="['Date', 'Type', 'Info', 'Amount', 'Notes', 'Details']" filename="{{p_id}}_{{p_first_name}}{{p_last_name}}.csv" value="Export">
-
+                <input class="btn btn-primary" style="width:60px; margin-left:10px;" ng-click='generatePdf(p_event_entries)' value="PDF">
+                <input class="btn btn-primary" style="width:60px;" ng-csv="p_event_entries" csv-header="['Date', 'Type', 'Info', 'Amount', 'Notes', 'Details']" filename="{{p_id}}_{{p_first_name}}{{p_last_name}}.csv" value="CSV">
+       <!--          <span class="glyphicon glyphicon-share-alt"></span> -->
         </form>
-    </div>
+    </div >
         <table class="table table-bordered table-striped table-hover" id="reportTable">
             <thead>
                 <tr>
+                    <th ></th>
                     <th ng-click="sort('event_timestamp')">Date
                         <span class="glyphicon sort-icon" ng-show="sortKey=='event_timestamp'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
@@ -45,32 +45,71 @@
                     <th ng-click="sort('amount')">Amount
                         <span class="glyphicon sort-icon" ng-show="sortKey=='amount'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('notes')">Notes
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='notes'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort('event_notes')">Notes
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='event_notes'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <th ng-click="sort('event_details')">Details
                         <span class="glyphicon sort-icon" ng-show="sortKey=='event_details'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('message')">Message
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='message'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
 
                 </tr>
             </thead>
             <tbody>
-                <tr dir-paginate="entry in p_event_entries|orderBy:sortKey:reverse|filter:searchText|itemsPerPage:10">
-
-                    <td>{{entry.event_timestamp | date}}</td>
-                    <td>{{entry.category}}</td>
-                    <td>{{entry.event_name}}</td>
-                    <td ng-if="entry.category=='Medication'">{{entry.medicine_amount}} {{entry.medicine_type}}</td>
-                    <td ng-if="entry.category=='Activity'">{{entry.activity_time}} Minutes </td>
-                    <td ng-if="entry.category=='Reading'">{{entry.reading_value}} mg/dL</td>
-                    <td ng-if="entry.category=='Food'">{{entry.meal_amount}} Cal</td>
-
-                    <td>{{entry.notes}}</td>
-                    <td>{{entry.event_details}}</td>
+                <tr dir-paginate="entry in p_event_entries|orderBy:'-event_timestamp':reverse|filter:searchText|itemsPerPage:15">
+                    <td >
+                        <a style="font-size: 20px;" ng-if="!entry.read" ng-click="readEntry(entry)" class="glyphicon glyphicon-check">
+                            <span class="badge alert-warning">New!</span>
+                        </a>
+                        <a style="font-size: 20px;" ng-if="entry.read" ng-click="readEntry(entry)" class="glyphicon glyphicon-unchecked">
+                        </a>
+                    </td> 
+                    <td>
+                        <span ng-if="!entry.read"><b>{{entry.event_timestamp | date}}</b></span>
+                        <span ng-if="entry.read">{{entry.event_timestamp | date}}</span>
+                    </td>
+                    <td>
+                        <span ng-if="!entry.read"><b>{{entry.category}}</b></span>
+                        <span ng-if="entry.read">{{entry.category}}</span>
+                    </td>
+                    <td>
+                        <span ng-if="!entry.read"><b>{{entry.event_name}}</b></span>
+                        <span ng-if="entry.read">{{entry.event_name}}</span>
+                    </td>
+                    <td ng-if="entry.category=='Medication'">
+                        <span ng-if="!entry.read"><b>{{entry.medicine_amount}} {{entry.medicine_type}}</b></span>
+                        <span ng-if="entry.read">{{entry.medicine_amount}} {{entry.medicine_type}}</span>             
+                    </td>
+                    <td ng-if="entry.category=='Activity'">
+                        <span ng-if="!entry.read"><b>{{entry.activity_time}} Minutes </b></span>
+                        <span ng-if="entry.read">{{entry.activity_time}} Minutes </span>             
+                    </td>
+                    <td ng-if="entry.category=='Reading'">
+                        <span ng-if="!entry.read"><b>{{entry.reading_value}} mg/dL</b></span>
+                        <span ng-if="entry.read">{{entry.reading_value}} mg/dL</span>             
+                    </td>
+                    <td ng-if="entry.category=='Food'">
+                        <span ng-if="!entry.read"><b>{{entry.meal_amount}} Calories</b></span>
+                        <span ng-if="entry.read">{{entry.meal_amount}} Calories</span>             
+                    </td>
+                    <td>
+                        <span ng-if="!entry.read"><b>{{entry.event_notes}}</b></span>
+                        <span ng-if="entry.read">{{entry.event_notes}}</span>
+                    </td>
+                    <td>
+                        <span ng-if="!entry.read"><b>{{entry.event_details}}</b></span>
+                        <span ng-if="entry.read">{{entry.event_details}}</span>
+                    </td>
+                    <td >
+                        <span ng-if="!entry.read"><b>{{entry.message}}</b></span>
+                        <span ng-if="entry.read">{{entry.message}}</span>
+                    </td>
             </tbody>
         </table> 
         <dir-pagination-controls
-            max-size="10"
+            max-size="15"
             direction-links="true"
             boundary-links="true" >
         </dir-pagination-controls>

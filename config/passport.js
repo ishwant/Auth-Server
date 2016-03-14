@@ -23,11 +23,16 @@ module.exports = function(passport) {
         function(username, password, done){
 
             authUser.findOne({username:username}, function(err,user){
-                if(user.validPassword(password))
-                {
-                    return done(null, user);
+                if(user){
+                    if(user.validPassword(password))
+                    {
+                        return done(null, user);
+                    }
+                    console.log("/login1");
+                    return done(null, false, {message: 'Incorrect Username/Password'});
                 }
-                return done(null, false, {message: 'unable to login'});
+                console.log("/login2");
+                return done(null, false, {message: 'Incorrect Username/Password'});
             });
         }
     ));

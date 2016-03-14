@@ -29,15 +29,12 @@
                     $rootScope.programs = data;
                 });
             };  
-            $scope.addNewProgram = function(program) {
+            $scope.addNewProgram = function(program,isValid) {
 
-                var url = '/programs';
+                var url = '/programs';  
                 console.log(program);
-                $scope.go = false;
-                if(program){
-                    $scope.go = true;
-                }
-                if($scope.go){
+                console.log(isValid);
+                if(isValid){
 
                     $http.post(url, program).success(function(data){
                         console.log('success');

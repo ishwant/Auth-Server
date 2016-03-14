@@ -16,8 +16,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var multer       = require('multer');
 var session      = require('express-session');
+var crypto = require('crypto'); 
 
 var configDB = require('./config/database.js');
+
 
 // configuration ===============================================================
 mongoose.connect(configDB.url); // connect to our database
@@ -51,8 +53,66 @@ require('./app/p_routes.js')(app, passport); //patient info related routes
 require('./app/c_routes.js')(app); //CaseWorker info related routes
 require('./app/authRoutes.js')(app, passport); //CaseWorker info related routes
 
+//=======TEST OF ENC-DEC=============================
+
+cipher = function(toCrypt, key){
+
+	// Create the 32-byte zero-filled key buffer
+	keyBuf = new Buffer(Array(32));
+	// Copy the key into this buffer
+	keyBuf.write(key, 'utf8');
+
+	// Create the 16-byte zero-filled IV buffer
+	ivBuf = new Buffer(Array(16));
+
+	var cipher = crypto.createCipheriv('aes256', keyBuf, ivBuf); 
+	output = cipher.update(toCrypt, 'utf-8', 'base64') + cipher.final('base64');
+	console.log(output);
+	return output;
+}
+
+decipher = function(ciphered, key){
+
+	// Create the 32-byte zero-filled key buffer
+	keyBuf = new Buffer(Array(32));
+	// Copy the key into this buffer
+	keyBuf.write(key, 'utf8');
+
+	// Create the 16-byte zero-filled IV buffer
+	ivBuf = new Buffer(Array(16));
+
+	var decipher = crypto.createDecipheriv('aes256', keyBuf, ivBuf); 
+	decrypted = decipher.update(ciphered,'base64','utf-8') + decipher.final('utf-8');
+	console.log(decrypted);
+	return decrypted;
+}
+createSuper = function(){
+	var authUser    = require('./app/models/authUser.js');
+	authUser.findOne({"username":"g2lbuddy"}, function(err,found){
+		if(found){
+			console.log("Super admin exists");
+		}
+		else{
+			var superUser = new authUser();
+			superUser.unique_ID	= null;
+			superUser.username = "g2lbuddy";
+			superUser.password = superUser.generateHash("g2lbuddy");
+			superUser.role = "super";
+			superUser.first_name = "super";
+			superUser.last_name = "super";
+			superUser.save();
+			console.log("Super user created");
+		}
+	});
+}
+
+
+//=======TEST OF ENC-DEC=============================
+
 
 // launch ======================================================================
-app.listen(port);
+app.listen(port, function(){
+	createSuper();
+});
 console.log('The magic happens on port ' + port);
 

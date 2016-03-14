@@ -9,14 +9,14 @@ module.exports = function(app, passport) {
 
 	app.get('/patients', auth, function(req, res) {
 
-		if(req.user.role == 'admin'){
+		if((req.user.role == 'admin')||(req.user.role=='super')){
 			User.find(function(err, users) {
 
 				console.log('/patients req.user %s',req.user.username);
 				// if there is an error retrieving, send the error. nothing after res.send(err) will execute
 				if (err)
 					res.send(err);
-	
+
 				res.json(users); // return all todos in JSON format
 			});
 		}
@@ -26,9 +26,7 @@ module.exports = function(app, passport) {
 					var caseworker = cwfound.c_first_name+' '+cwfound.c_last_name+' (ID = '+cwfound.c_id+')';
 					console.log('caseworker to find: %s', caseworker);
 					var cwfind = cwfound.c_id;
-				//db.inventory.find( { tags: { $in: [ /^be/, /^st/ ] } } )
-				//	User.find({p_case_worker:caseworker}, function(err, users){
-				//	db.users.find({"username": {'$regex' : '.*' + 'Son' + '.*'}})
+
 					User.find({p_case_worker: caseworker}, function(err, users){
 						if (err)
 							res.send(err);
@@ -62,6 +60,8 @@ module.exports = function(app, passport) {
 		newPatient.p_case_worker = req.body.p_case_worker;
 		newPatient.p_program = req.body.p_program;
 		newPatient.p_active = true;
+		newPatient.p_messageread = true;
+		newPatient.p_eventread = true;
 
 		var token = generateToken();
 		console.log("generated token: %s", token);
@@ -99,6 +99,38 @@ module.exports = function(app, passport) {
 			};
 		});
 	});	
+	app.get('/viewPatientReport/:p_id',auth, function(req, res) {
+		var patient_id = req.params.p_id;
+		User.findOne({p_id: patient_id}, function(err,found){
+			if(err){
+				console.log('error occured');
+				res.send(err);
+			}
+			if(found==null){
+				console.log('No such user exists');
+				res.send({status: 'User not found'});
+			}
+			if(found!=null){
+				console.log('viewPatient called, User Found!');
+				for(var i = 0; i < found.p_event_entries.length; i++) {
+					if(found.p_event_entries[i].event_name !=null)
+						found.p_event_entries[i].event_name = decipher(found.p_event_entries[i].event_name, found.p_token);
+					if(found.p_event_entries[i].category!=null)
+						found.p_event_entries[i].category = decipher(found.p_event_entries[i].category, found.p_token);
+
+					if(found.p_event_entries[i].category=="Reading"){
+						found.p_event_entries[i].reading_value = decipher(found.p_event_entries[i].reading_value, found.p_token);
+					}
+					else if(found.p_event_entries[i].category=="Medication"){
+						found.p_event_entries[i].medicine_type = decipher(found.p_event_entries[i].medicine_type, found.p_token);
+					}
+
+				}
+				res.send(found);
+			};
+		});
+	});	
+
 
 	//================UPDATE PATIENT RECORD=============================
 
@@ -143,6 +175,42 @@ module.exports = function(app, passport) {
 				});
 			};
 		});
+	});
+
+	app.put('/entryRead/:p_id/:e_id/:currentStatus',auth, function(req, res) {
+		
+		var patient_id = req.params.p_id;
+		var entry_id = req.params.e_id;
+		var currentS = req.params.currentStatus;
+
+		var final;
+		if(currentS=="true"){
+			final = false;
+		}
+		else{
+			final = true;
+		}
+
+		console.log("p_id: %s", patient_id);
+		console.log("e_id: %s", entry_id);
+
+		User.update(
+			{"p_id": patient_id, "p_event_entries._id": entry_id},
+			{
+				"$set":{"p_event_entries.$.read":final}
+			}, 
+			function(err) {
+				if (err)
+				{ 
+					console.log(err);
+					res.send(err);
+				}
+				overAllRead(patient_id);
+				console.log("event status toggled");
+				res.json({ message: 'entry read' });
+			}
+		);
+		
 	});	
 
 	//================DEACTIVATE PATIENT PROFILE=============================
@@ -197,27 +265,65 @@ module.exports = function(app, passport) {
 		});
 	});	
 
-	//================DELETE A MESSAGE=============================
+	//================Read A MESSAGE=============================
 
-	app.delete('/deleteMessage/:p_id/:m_id',auth, function(req, res) {
+	app.put('/messageRead/:p_id/:m_id/:currentStatus',auth, function(req, res) {
 		
 		var patient_id = req.params.p_id;
 		var message_id = req.params.m_id;
-
+		var currentS = req.params.currentStatus;
+		var final;
+		if(currentS=="true"){
+			final = false;
+		}
+		else{
+			final = true;
+		}
 		console.log("p_id: %s", patient_id);
 		console.log("m_id: %s", message_id);
-
-		User.findOneAndUpdate({p_id: patient_id},{$pull:{p_messages: {m_id:message_id}}}, function(err) {
-		
-			if (err)
-			{ 
-				console.log(err);
-				res.send(err);
+		console.log("final: %s", final);
+		User.update(
+			{"p_id": patient_id, "p_messages._id": message_id},
+			{
+				//"$set":{"p_messages.$.read":true}
+				"$set":{"p_messages.$.read":final}
+			}, 
+			function(err) {
+				if (err)
+				{ 
+					console.log(err);
+					res.send(err);
+				}
+				overAllRead(patient_id);
+				console.log("msg status toggled");
+				res.json({ message: 'msg status toggled' });
 			}
-
-			res.json({ message: 'message deleted' });
-		});
+		);
+		
 	});	
+	var overAllRead = function (p_id){
+		var patient_id = p_id;
+		console.log("overAllRead called %s",patient_id);
+		User.findOne({p_id: patient_id}, function(err,found){
+	  		//	console.log("found patient %j",found);
+				if(found){
+					found.p_messageread = true;
+					found.p_eventread = true;
+					for (var i = found.p_messages.length - 1; i >= 0; i--) {
+						if(!found.p_messages[i].read){
+							found.p_messageread = false;
+						}
+					};
+					for (var i = found.p_event_entries.length - 1; i >= 0; i--) {
+						if(!found.p_event_entries[i].read){
+							found.p_eventread = false;
+						}
+					};
+					found.save();
+				}
+		   	}
+		);
+	};
 
 
 	//============FUNCTION TO GENERATE TOKEN==========================

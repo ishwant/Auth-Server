@@ -184,11 +184,11 @@
     </div>
 
     <!-- Patient's Case worker: Required -->
-    <div ng-if="currentUser.role.indexOf('admin') > -1" class="form-group" ng-class="{ 'has-error' : editPatientProfileForm.case_worker.$invalid && !editPatientProfileForm.case_worker.$pristine }" >
+    <div ng-if="((currentUser.role.indexOf('admin') > -1)||(currentUser.role.indexOf('super') > -1))" class="form-group" ng-class="{ 'has-error' : editPatientProfileForm.case_worker.$invalid && !editPatientProfileForm.case_worker.$pristine }" >
 
         <label class="control-label col-sm-2" for="case_worker" >* Case Worker:</label>
 
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <select class="form-control" id="case_worker" ng-model="patient.p_case_worker" ng-controller="allCaseWorkersCtrl" ng-init="getAllCaseWorkers()" ng-change="changeValue(patient.p_case_worker)" required>
                 <option>----Please select----</option>
                 <option ng-repeat="user in users">{{user.c_first_name}} {{user.c_last_name}} (ID = {{user.c_id}})</option>
@@ -228,20 +228,15 @@
 
         <label class="control-label col-sm-2" for="program" required>* Program:</label>
 
-        <div class="col-sm-3">
+        <div class="col-sm-3" ng-controller="programCtrl" ng-init="getAllPrograms()">
+            <div ng-repeat="program in programs">
+                <input type="checkbox" checkbox-group />
+                <label>{{program.programAlias}} ({{program.programName}})</label>
+            </div>
+        <!-- <div class="col-sm-3">
             <select multiple class="form-control" id="program" ng-controller="programCtrl" ng-init="getAllPrograms()" ng-model="patient.p_program" ng-change="changeValue(patient.p_program)">
                 <option ng-repeat="program in programs">{{program.programName}}</option>
-            </select>  
-        </div>
-        <div class="col-sm-3">
-            <input type="text" class="form-control" ng-model="program.programName" placeholder="+ Add New Program">  
-        </div>
-        <div class="col-sm-1">
-            <button ng-click="addNewProgram(program)"
-                    ng-controller="programCtrl" 
-                    class="btn btn-default">
-                        Add
-            </button>
+            </select>  --> 
         </div>
     </div>
     <br></br>

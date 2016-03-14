@@ -7,21 +7,32 @@
         <font color="#00000">    
         <h1><span class="glyphicon glyphicon-log-in"></span> Login</h1>
         <br/>
+                <!-- Warning Alert -->
+        <div class="alert alert-danger" ng-show="showWarningAlert">
+            <button type="button" class="close" data-ng-click="switchBool('showWarningAlert')">×</button> 
+            <strong>Alert!</strong> 
+            {{warningAlert}}
+        </div>
             <!-- LOGIN FORM -->
-        <form class="form-horizontal" role="form">
-            <div class="form-group">
-                <label class="control-label col-sm-2">Username: </label>
+        <form class="form-horizontal" role="form" name="loginForm" ng-submit="submitted = true">
+            <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid && !loginForm.username.$pristine}">
+                <label class="control-label col-sm-3">Username: </label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control" name="username" ng-model="user.username">
+                    <input type="text" class="form-control" name="username" ng-model="user.username" required>
+                    <p ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="help-block">Enter a valid username.</p>
                 </div>                    
             </div>
-            <div class="form-group">
-                <label class="control-label col-sm-2">Password: </label>
+            <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid && !loginForm.password.$pristine }">
+                <label class="control-label col-sm-3">Password: </label>
                 <div class="col-sm-7">
-                    <input type="password" class="form-control" name="password" ng-model="user.password">
+                    <input type="password" class="form-control" name="password" ng-model="user.password" required>
+                    <p ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="help-block">Enter a valid password.</p>
                 </div>      
             </div>       
-            <button type="submit" class="btn btn-primary btn-lg col-sm-6" style="margin-left: 110px" ng-click="login(user)">
+            <button type="submit" 
+                class="btn btn-primary btn-lg col-sm-6" 
+                style="margin-left: 110px" 
+                ng-click="loginForm.$valid&&login(user)">
                 <span class="glyphicon glyphicon-log-in">
                     Login</button>
         </form>

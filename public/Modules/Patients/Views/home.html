@@ -7,7 +7,7 @@
                 <input type="text" ng-model="search" class="form-control" placeholder="Search">
                     <i class="glyphicon glyphicon-search form-control-feedback"></i>
             </div>
-            <input ng-if="currentUser.role.indexOf('admin') > -1" class="btn btn-primary" onclick="location.href='#/registerPatient';" role="button" value="Register New Patient">
+            <input ng-if="((currentUser.role.indexOf('admin') > -1)||(currentUser.role.indexOf('super') > -1))" class="btn btn-primary" onclick="location.href='#/registerPatient';" role="button" value="Register New Patient">
         </form>
     </div>
         <table class="table table-bordered table-striped table-hover">
@@ -28,13 +28,14 @@
                     <th ng-click="sort('p_program')">Program
                         <span class="glyphicon sort-icon" ng-show="sortKey=='p_program'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ></th>
-                    <th ></th>
-                    <th ></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr dir-paginate="user in users|orderBy:sortKey:reverse|filter:search|itemsPerPage:10" ng-controller="singlePatientCtrl">
+                <tr dir-paginate="user in users|orderBy:'p_id':reverse|filter:search|itemsPerPage:15| filter:{p_active: true}" ng-controller="singlePatientCtrl">
 
                     <td>{{user.p_id}}</td>
                     <td>{{user.p_first_name}}</td>
@@ -42,18 +43,118 @@
                     <td>{{user.p_dob | date}}</td>
                     <td>{{user.p_program.join(', ')}}</td> 
 
-                    <td><a ng-click="viewPatient(user)" class="glyphicon glyphicon-pencil"></a></td>
-                    <td><a ng-click="viewPatientMessages(user)" class="glyphicon glyphicon glyphicon-envelope"></a></td>
-                    <td><a ng-click="viewPatientReport(user)" class="glyphicon glyphicon glyphicon glyphicon-file"></a></td>
+                    <th>
+                        <a style="font-size: 17px;"
+                        id="info" 
+                        tabindex="0" 
+                        data-container="body"
+                        class="glyphicon glyphicon-info-sign" 
+                        data-trigger="click"
+                        data-placement="bottom" 
+                        data-html="true" 
+                        data-content=
+                                    "<div class= 'well'>
+                                        Phone: {{user.p_mobile_contact}}
+                                    </div>
+                                    <div class='well'>
+                                        Email: {{user.p_email}}
+                                    </div>" 
+                        title="Contact Details" 
+                        data-toggle="popover"></a>
+                    </th> 
+                    <td><a style="font-size: 17px;" ng-click="viewPatient(user)" class="glyphicon glyphicon-pencil"></a></td>
+                    <td>
+                        <a style="font-size: 17px;" ng-click="viewPatientMessages(user)" 
+                            class="glyphicon glyphicon glyphicon-envelope">
+                            <span ng-if="!user.p_messageread" class="badge alert-warning">New!</span>
+                        </a>
+                    </td>
+                    <td><a style="font-size: 17px;" ng-click="viewPatientReport(user)" 
+                            class="glyphicon glyphicon glyphicon glyphicon-file">
+                            <span ng-if="!user.p_eventread" class="badge alert-warning">New!</span>
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table> 
         <dir-pagination-controls
-            max-size="10"
+            max-size="15"
             direction-links="true"
             boundary-links="true" >
         </dir-pagination-controls>
-    </div>
+    <br></br>
+    <br></br>
+        <h2 class="panel-heading">De-Active Patient Profiles</h2>
+
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th ng-click="sort('p_id')">Id
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('p_first_name')">First Name
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_first_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('p_last_name')">Last Name
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_last_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('p-dob')">Date of Birth
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_dob'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('p_program')">Program
+                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_program'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="info" dir-paginate="user in users|orderBy:'p_id':reverse|filter:search|itemsPerPage:15|filter:{p_active: false}" ng-controller="singlePatientCtrl">
+
+                    <td>{{user.p_id}}</td>
+                    <td>{{user.p_first_name}}</td>
+                    <td>{{user.p_last_name}}</td>
+                    <td>{{user.p_dob | date}}</td>
+                    <td>{{user.p_program.join(', ')}}</td> 
+
+                    <th>
+                        <a style="font-size: 17px;" id="info" 
+                        tabindex="0" 
+                        data-container="body"
+                        class="glyphicon glyphicon-info-sign" 
+                        data-trigger="click"
+                        data-placement="bottom" 
+                        data-html="true" 
+                        data-content=
+                                    "<div class= 'well'>
+                                        Phone: {{user.p_mobile_contact}}
+                                    </div>
+                                    <div class='well'>
+                                        Email: {{user.p_email}}
+                                    </div>" 
+                        title="Contact Details" 
+                        data-toggle="popover"></a>
+                    </th> 
+                    <td><a style="font-size: 17px;" ng-click="viewPatient(user)" class="glyphicon glyphicon-pencil"></a></td>
+                    <td><a style="font-size: 17px;" ng-click="viewPatientMessages(user)" class="glyphicon glyphicon glyphicon-envelope"></a></td>
+                    <td><a style="font-size: 17px;" ng-click="viewPatientReport(user)" class="glyphicon glyphicon glyphicon glyphicon-file"></a></td>
+                </tr>
+            </tbody>
+        </table> 
+        <dir-pagination-controls
+            max-size="15"
+            direction-links="true"
+            boundary-links="true" >
+        </dir-pagination-controls>
+        <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
 </div>
+
 <!-- Ends Controller -->
 

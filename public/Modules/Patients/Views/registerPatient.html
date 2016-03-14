@@ -222,23 +222,16 @@
 
         <label class="control-label col-sm-2" for="program" required>* Program:</label>
 
-        <div class="col-sm-3">
-            <select multiple class="form-control" id="program" ng-controller="programCtrl" ng-init="getAllPrograms()" ng-model="patient.p_program" ng-change="changeValue(patient.p_program)">
+        <div class="col-sm-3" ng-controller="programCtrl" ng-init="getAllPrograms()">
+            <div ng-repeat="program in programs">
+                <input type="checkbox" checkbox-group />
+                <label>{{program.programAlias}} ({{program.programName}})</label>
+            </div>
+            <!-- <select multiple class="form-control" id="program" ng-controller="programCtrl" ng-init="getAllPrograms()" ng-model="patient.p_program" ng-change="changeValue(patient.p_program)">
                 <option ng-repeat="program in programs">{{program.programName}}</option>
-            </select>  
-        </div>
-        <div class="col-sm-3">
-            <input type="text" class="form-control" ng-model="program.programName" placeholder="+ Add New Program">  
-        </div>
-        <div class="col-sm-1">
-            <button ng-click="addNewProgram(program)"
-                    ng-controller="programCtrl" 
-                    class="btn btn-default">
-                        Add
-            </button>
+            </select>   --> 
         </div>
 
-        
     </div>
     <br></br>
     <div class="form-actions" >

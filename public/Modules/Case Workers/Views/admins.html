@@ -35,7 +35,7 @@
                     <th ng-click="sort('last_name')">Last Name
                         <span class="glyphicon sort-icon" ng-show="sortKey=='last_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ></th>
+                    <th ng-if="currentUser.role=='super'"></th>
                 </tr>
             </thead>
             <tbody>
@@ -43,7 +43,7 @@
                 	<td>{{admin.unique_ID}}</td>
                     <td>{{admin.first_name}}</td>
                     <td>{{admin.last_name}}</td>
-                    <td><a ng-click="removeAdmin(admin.unique_ID)" class="glyphicon glyphicon-remove-circle"></a></td>
+                    <td ng-if="currentUser.role=='super'"><a style="font-size: 20px;" ng-click="removeAdmin(admin.unique_ID)" class="glyphicon glyphicon-remove-circle"></a></td>
 
                 </tr>
             </tbody>

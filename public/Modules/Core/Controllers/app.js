@@ -185,7 +185,7 @@ var checkAdmin = function($q, $timeout, $http, $location, $rootScope) {
     $rootScope.errorMessage = null;
     //User is Authenticated
     if (user !== '0') {
-    	if(user.role=='admin'){
+    	if(user.role=='admin'||user.role =='super'){
     		$rootScope.currentUser = user;
       		deferred.resolve();
     	}    

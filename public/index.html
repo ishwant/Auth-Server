@@ -14,7 +14,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.css">
     <style>
 
-
         .jumbotron {
             background-color:#79a9d2;
         }
@@ -87,7 +86,7 @@
           font-family: Arial;
           float: left;
         }
-        input:last-child {
+        input:nth-last-child(-n+2) {
           float: right;
         }
     </style>
@@ -121,19 +120,19 @@
                     </li>
 
                     <!-- Only Admin -->
-                    <li ng-if="currentUser.role.indexOf('admin') > -1" ng-class="{ active: isActive('/CaseWorkers')}">
+                    <li ng-if="((currentUser.role.indexOf('admin') > -1)||(currentUser.role.indexOf('super') > -1))" ng-class="{ active: isActive('/CaseWorkers')}">
                         <a href="#/CaseWorkers" ng-click="navbar.selectedTab(2)">
                             <span class="glyphicon glyphicon-user" style="color: #006dcc"></span>
                             <b>CASE WORKERS</b>
                         </a>
                     </li>
-                    <li ng-if="currentUser.role.indexOf('admin') > -1" ng-class="{ active: isActive('/programs')}">
+                    <li ng-if="((currentUser.role.indexOf('admin') > -1)||(currentUser.role.indexOf('super') > -1))" ng-class="{ active: isActive('/programs')}">
                         <a href="#/programs" ng-click="navbar.selectedTab(3)">
                             <span class="glyphicon glyphicon-th-list" style="color: #006dcc"></span>
                             <b>PROGRAMS</b>
                         </a>
                     </li>
-                    <li ng-if="currentUser.role.indexOf('admin') > -1" ng-class="{ active: isActive('/admins')}">
+                    <li ng-if="((currentUser.role.indexOf('admin') > -1)||(currentUser.role.indexOf('super') > -1))" ng-class="{ active: isActive('/admins')}">
                         <a href="#/admins" ng-click="navbar.selectedTab(4)">
                             <span class="glyphicon glyphicon-king" style="color: #006dcc"></span>
                             <b>ADMINS</b>
@@ -176,6 +175,7 @@
     <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>   
     
+
     <script src="Modules/Core/Controllers/app.js"></script>
     <script src="Modules/Core/Controllers/navigationController.js"></script>
     <script src="Modules/Patients/Controllers/patientCtrl.js"></script>
@@ -199,6 +199,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.6/ng-csv.min.js"></script>
 
     <script src="http://mrrio.github.io/jsPDF/dist/jspdf.debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.16/jspdf.plugin.autotable.js"></script>
+    
+
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
 
     <script >
 

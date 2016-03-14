@@ -26,9 +26,12 @@
                 
                 $http.get(url).success(function(data) {
                     console.log(data);
-
+                    var countUnreadMessages;
                     $scope.users = data;
                     console.log($rootScope.currentUser);
+                    // for(var i=0;i<data.p_event_entries.length;i++){
+
+                    // }
                 });
             };  
             $scope.sort = function(keyname){
@@ -63,7 +66,42 @@
     };
 
     });
+    app.directive('toggle', function(){
+        return {
+        restrict: 'A',
+        link: function(scope, element){
+            $(element).popover();
+        }
+        };
+    });
+    app.directive("checkboxGroup", function() {
+        return {
+            restrict: "A",
+            link: function(scope, elem, attrs) {
+                // Determine initial checked boxes
+                if (scope.array.indexOf(scope.program.programAlias) !== -1) {
+                    elem[0].checked = true;
+                }
 
+                // Update array on click
+                elem.bind('click', function() {
+                    var index = scope.array.indexOf(scope.program.programAlias);
+                    // Add if checked
+                    if (elem[0].checked) {
+                        if (index === -1) scope.array.push(scope.program.programAlias);
+                    }
+                    // Remove if unchecked
+                    else {
+                        if (index !== -1) scope.array.splice(index, 1);
+                    }
+                    // Sort and update DOM display
+                    scope.$apply(scope.array.sort(function(a, b) {
+                        return a - b
+                    }));
+                });
+            }
+        }
+    });
 
     //CONTROLLER
     app.controller('singlePatientCtrl',[
@@ -74,6 +112,16 @@
         '$routeParams',
         function ($scope, $rootScope, $http, $location, $routeParams) {
 
+            $scope.array = [];
+            $scope.array_ = angular.copy($scope.array);
+
+            // $scope.update = function() {
+            //     if ($scope.array.toString() !== $scope.array_.toString()) {
+            //         return "Changed";
+            //     } else {
+            //         return "Not Changed";
+            //     }
+            // };
             $scope.sort = function(keyname){
                 $scope.sortKey = keyname;   //set the sortKey to the param passed
                 $scope.reverse = !$scope.reverse; //if true make it false and vice versa
@@ -85,6 +133,7 @@
                 console.log(isValid);
 
                 if(isValid){
+                    $scope.patient.p_program = $scope.array;
                     console.log(patient);
                     $http.post(url, patient).success(function(response, status, headers, config){
                         console.log('success');
@@ -121,6 +170,8 @@
                         $scope.patient.p_status = 'De-active';
                     }
                     $scope.patient = data;
+                    $scope.array = $scope.patient.p_program;
+                    console.log($scope.array);
                     $scope.patient.p_dob = new Date(data.p_dob);
 
                 });
@@ -157,6 +208,7 @@
 
                 if(isValid){
                     console.log(patient);
+                    patient.p_program = $scope.array;
                     $http.put(url, patient).success(function(response, status, headers, config){
                         console.log('success');
                         if(response.message=='Patient updated'){
@@ -175,9 +227,10 @@
 
             $scope.generateToken = function (){
                 console.log('generateToken called');
-                var tokenLenth = 5;
 
-                var characters = ['a', 'b', 'c', 'g',  'l', 'o', 't'];
+                var tokenLenth = 6;
+
+                var characters = ['a', 'b', 'c', 'g',  'l', 'o', 't', '2', 'd', 'u'];
                 var numbers = ['2','3'];
 
                 var finalCharacters = characters;
@@ -189,6 +242,7 @@
                     tokenArray.push(finalCharacters[Math.floor(Math.random() * finalCharacters.length)]);
                 };
                 var token = tokenArray.join("");
+
                 $scope.patient.p_token = token;
                 console.log('token in generateToken %s', token);
                 return token;   
@@ -235,10 +289,34 @@
                     $scope.p_last_name = data.p_last_name;
                     $scope.p_dob = data.p_dob;
                     $scope.p_program = data.p_program; 
-                    console.log($scope.p_messages);
+                    $scope.p_messageread = data.p_messageread; 
+                    console.log($scope.p_messageread);
                 });
             };
-            $scope.deleteMessage = function(message){
+            $scope.readMessage = function(message){
+
+                var url = '/messageRead/'+ $rootScope.p_id+ '/'+ message._id + '/' + message.read;
+                $http.put(url).success(function(response, status, headers, config){
+                    console.log('success');
+                    if(response.message=='msg status toggled'){
+                        $scope.viewlistofPatientMessages();
+                    }
+                }).error(function(response, status, headers, config){
+                    $scope.error_message = response.error_message;
+                });
+            };
+            $scope.readEntry = function(entry){
+                var url = '/entryRead/'+ $rootScope.p_id+ '/'+ entry._id +'/'+ entry.read;
+                $http.put(url).success(function(response, status, headers, config){
+                    console.log('success');
+                    if(response.message=='entry read'){
+                        $scope.viewlistofPatientEntries();
+                    }
+                }).error(function(response, status, headers, config){
+                    $scope.error_message = response.error_message;
+                });
+            };
+        /*    $scope.deleteMessage = function(message){
 
                 var url = '/deleteMessage/'+ $rootScope.p_id + '/' + message.m_id;
                 console.log(url);
@@ -251,8 +329,8 @@
                     console.log(response.error_message);     
                 });
             };
-
-            //============VIEW MESSAGES=============================
+        */
+            //============VIEW REPORTS=============================
             $scope.viewPatientReport = function(patient){
                 $rootScope.p_id = patient.p_id;
                 $rootScope.patient = patient;
@@ -262,10 +340,16 @@
             };
             $scope.viewlistofPatientEntries = function(){
 
-                var url = '/viewPatient/'+ $rootScope.p_id;
+                var url = '/viewPatientReport/'+ $rootScope.p_id;
                 $http.get(url).success(function(data) {
                     console.log(data);
-                    
+                    $scope.receive = data;
+                /*    for(var i = 0; i < $scope.receive.p_event_entries.length; i++) {
+                        console.log("temp %s", $scope.receive.p_event_entries[i]);
+                    //    var dec = $crypto.decrypt( $scope.receive.p_event_entries[i].event_name, $scope.receive.p_token);
+                    //    console.log("dec %s", dec);
+                    }
+                */
                     $scope.p_first_name = data.p_first_name;
                     $scope.p_last_name = data.p_last_name;
                     $scope.p_dob = data.p_dob;
@@ -277,21 +361,91 @@
                 });
             };
             $scope.generatePdf= function(entries){
-                console.log(entries);
-            /*    var doc = new jsPDF();
-                var category = $rootScope.p_id;
-                console.log(category);
+
+                var rows =[];
                 for(var i=0;i<entries.length;i++){
-                    var entry = entries[i].event_timestamp
+                    $scope.temp =[];
+                    $scope.temp.date = entries[i].event_timestamp;
+                    $scope.temp.category = entries[i].category;
+                    $scope.temp.info = entries[i].event_name;
+                    $scope.temp.notes = entries[i].event_notes;
+                    $scope.temp.details = entries[i].event_details;
+                    $scope.temp.message = entries[i].message;
+                    if(entries[i].category=="Medication"){
+                        $scope.temp.amount = entries[i].medicine_amount + ' '+
+                                      entries[i].medicine_type ;
+                    }
+                    else if(entries[i].category=="Activity"){
+                        $scope.temp.amount = entries[i].activity_time +
+                                      ' minutes' ;
+                    }
+                    else if(entries[i].category=="Food"){
+                        $scope.temp.amount = entries[i].meal_amount +
+                                      ' calories' ;
+                    }
+                    else if(entries[i].category=="Reading"){
+                        $scope.temp.amount = entries[i].reading_value +
+                                      ' mg/dL' ;
+                    }
+                    else if(entries[i].category=="Note"){
+                        $scope.temp.amount = entries[i].event_notes;
+                    }
+                    rows.push($scope.temp);                    
                 }
-                doc.text(20,30,category);
-            //    doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
-                doc.addPage();
-             //   doc.text(20, 20, 'Do you like that?');
+                var columns = [
+                    {title: "Date", dataKey: "date"},
+                    {title: "Type", dataKey: "category"}, 
+                    {title: "Info", dataKey: "info"}, 
+                    {title: "Amount", dataKey: "amount"}, 
+                    {title: "Notes", dataKey: "notes"},
+                    {title: "Details", dataKey: "details"},
+                    {title: "Message", dataKey: "message"}, 
+                ];
+                var head = "Patient Report : " + $scope.p_first_name+" "+$scope.p_last_name+" (ID = "+$scope.p_id+")";
+                // Only pt supported (not mm or in)
+                var doc = new jsPDF('p', 'pt');
+                doc.autoTable(columns, rows, {
+                    margin: {top: 60},
+                    beforePageContent: function(data) {
+                        doc.text(head, 40, 30);
+                    }
+                });
+                var filename = $scope.p_first_name+" "+$scope.p_last_name+" (ID = "+$scope.p_id+").pdf";
+                doc.save(filename);
+            //     console.log(entries);
+            //     var doc = new jsPDF();
+            //     doc.setFontSize(40);
+            //     doc.text(65, 35, "Patient Report");
+
+            //     doc.setFontSize(12);
                 
-                doc.save('Test.pdf'); */
+            //     var category = $rootScope.p_id;
+            //     console.log(category);
+            //     var y = 45;
+            //     var x = 12;
+            //     for(var i=0;i<entries.length;i++){
+            //       //  doc.text(12,45,)
+            //       //  var entry = entries[i].event_timestamp
+            //     }
+            // //    doc.text(20,30,category);
+            // //    doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
+            // //    doc.addPage();
+            //  //   doc.text(20, 20, 'Do you like that?');
+                
+            //     doc.save('Test.pdf'); 
+
+
             }
         }
     ]);
-    
 })();
+
+
+
+
+
+
+
+
+
+

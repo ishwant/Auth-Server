@@ -29,22 +29,33 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
+                    <th></th>
                     <th ng-click="sort('m_share_date')">Date
                         <span class="glyphicon sort-icon" ng-show="sortKey=='m_share_date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <th ng-click="sort('m_message')">Message
                         <span class="glyphicon sort-icon" ng-show="sortKey=='m_message'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ></th>
                 </tr>
             </thead>
             <tbody>
-                <tr dir-paginate="message in p_messages|orderBy:sortKey:reverse|filter:search|itemsPerPage:10">
-
-                    <td>{{message.m_share_date | date}}</td>
-                    <td>{{message.m_message}}</td>
-
-                    <td><a onClick="return confirm('Are you absolutely sure you want to delete?')" ng-click="deleteMessage(message)" class="glyphicon glyphicon-trash"></a></td>
+                <tr dir-paginate="message in p_messages|orderBy:'-m_share_date':reverse|filter:search|itemsPerPage:15">
+                    <td>
+                        <a style="font-size: 20px;" ng-if="!message.read"ng-click="readMessage(message)" class="glyphicon glyphicon-check">
+                            <span class="badge alert-warning">New!</span>
+                        </a>
+                        <a style="font-size: 20px;" ng-if="message.read"ng-click="readMessage(message)" class="glyphicon glyphicon-unchecked">
+                        </a>
+                    </td> 
+                    <td>
+                        <span ng-if="!message.read"><b>{{message.m_share_date | date}}</b></span>
+                        <span ng-if="message.read">{{message.m_share_date | date}}</span>
+                    </td>
+                    <td>
+                        <span ng-if="!message.read"><b>{{message.m_message}}</b></span>
+                        <span ng-if="message.read">{{message.m_message}}</span>
+                    </td>
+                    
             </tbody>
         </table> 
         <dir-pagination-controls
@@ -52,6 +63,8 @@
             direction-links="true"
             boundary-links="true" >
         </dir-pagination-controls>
+        <br></br>
+        <br></br>
     </div>
 </div>
 <!-- Ends Controller -->

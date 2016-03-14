@@ -2,14 +2,17 @@
 	<br/>
 	<h1 class="panel-heading" class="glyphicon glyphicon-add">PROGRAMS</h1>
 	<br/><br/><br/><br/>
-	<form class="form-inline">
+	<form class="form-inline" name="programForm">
   		<div class="form-group">
-    		<input  type="text" class="form-control" ng-model="program.name" placeholder="Enter Program Name" style=" margin-right:15px; " >
-    		<input type="text" class="form-control" ng-model="program.alias" placeholder="Enter Program Alias">
+    		<input  type="text" class="form-control" ng-model="program.name" placeholder="Enter Program Name" style=" margin-right:15px; " name="name" required>
+            <p ng-show="programForm.name.$invalid && !programForm.name.$pristine && !programForm.name.$touched" class="help-block">Enter a valid program name!</p>
+
+    		<input type="text" class="form-control" ng-model="program.alias" placeholder="Enter Program Alias" name="alias" required>
+            <p ng-show="programForm.alias.$invalid && !programForm.alias.$pristine && !programForm.alias.$touched" class="help-block">Enter a valid program alias!</p>
     	</div>
     	<br></br>
   		<div class="form-actions">
-  			<button type="submit" ng-click="addNewProgram(program)" class="btn btn-primary" style="float:center">Add New Program</button>
+  			<button type="submit" ng-click="programForm.$valid && addNewProgram(program, programForm.$valid)" class="btn btn-primary" style="float:center">Add New Program</button>
   		</div>
 	</form>
 
@@ -35,7 +38,7 @@
                 	<td>{{$index+1}}</td>
                     <td>{{program.programName}}</td>
                     <td>{{program.programAlias}}</td>
-                    <td><a ng-click="deleteProgram(program)" class="glyphicon glyphicon glyphicon-trash"></a></td>
+                    <td><a style="font-size: 17px;" ng-click="deleteProgram(program)" class="glyphicon glyphicon glyphicon-trash"></a></td>
 
                 </tr>
             </tbody>
