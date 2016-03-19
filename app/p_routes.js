@@ -47,17 +47,17 @@ module.exports = function(app, passport) {
 
 		console.log(req.body.p_case_worker);
 		newPatient.p_id = req.body.p_id;
-		newPatient.p_first_name = req.body.p_first_name;
-		newPatient.p_last_name = req.body.p_last_name;
+		newPatient.p_first_name = req.body.p_first_name.toLowerCase();
+		newPatient.p_last_name = req.body.p_last_name.toLowerCase();
 		newPatient.p_dob = req.body.p_dob;
 		newPatient.p_mobile_contact = req.body.p_mobile_contact;
-		newPatient.p_email = req.body.p_email;
+		newPatient.p_email = req.body.p_email.toLowerCase();
 		newPatient.p_address1 = req.body.p_address1;
 		newPatient.p_address2 = req.body.p_address2;
 		newPatient.p_city = req.body.p_city;
 		newPatient.p_state = req.body.p_state;
 		newPatient.p_zipcode = req.body.p_zipcode;
-		newPatient.p_case_worker = req.body.p_case_worker;
+		newPatient.p_case_worker = req.body.p_case_worker.toLowerCase();
 		newPatient.p_program = req.body.p_program;
 		newPatient.p_active = true;
 		newPatient.p_messageread = true;

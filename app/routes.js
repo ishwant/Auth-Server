@@ -12,8 +12,8 @@ module.exports = function(app) {
 		console.log('User LName: %s',req.body.userLName);
 		console.log('User Token: %s',req.body.userToken);
 
-   		var req_fname = req.body.userFName;
-   		var req_lname = req.body.userLName;
+   		var req_fname = req.body.userFName.toLowerCase();
+   		var req_lname = req.body.userLName.toLowerCase();
    		var req_token = req.body.userToken;
 
          var decryptedtoken = decipher(req_token, req_fname);

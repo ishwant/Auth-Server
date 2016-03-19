@@ -32,7 +32,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr dir-paginate="user in users|orderBy:sortKey:reverse|filter:search|itemsPerPage:15|filter:{c_active: true}" ng-controller="singleCaseWorkerCtrl">
+                <tr dir-paginate="user in users|orderBy:sortKey:reverse|filter:search|itemsPerPage:15|filter:{c_active: true}" ng-controller="singleCaseWorkerCtrl" pagination-id="paginate1">
 
                     <td>{{user.c_id}}</td>
                     <td>{{user.c_first_name}}</td>
@@ -45,6 +45,7 @@
             </tbody>
         </table> 
         <dir-pagination-controls
+            pagination-id="paginate1"
             max-size="15"
             direction-links="true"
             boundary-links="true" >
@@ -76,7 +77,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="info" dir-paginate="user in users|orderBy:sortKey:reverse|filter:search|itemsPerPage:15|filter:{c_active: false}" ng-controller="singleCaseWorkerCtrl">
+                <tr class="info" dir-paginate="user in users|orderBy:sortKey:reverse|filter:search|itemsPerPage:15|filter:{c_active: false}" ng-controller="singleCaseWorkerCtrl" pagination-id="paginate2">
 
                     <td>{{user.c_id}}</td>
                     <td>{{user.c_first_name}}</td>
@@ -89,6 +90,7 @@
             </tbody>
         </table> 
         <dir-pagination-controls
+            pagination-id="paginate2"
             max-size="15"
             direction-links="true"
             boundary-links="true" >

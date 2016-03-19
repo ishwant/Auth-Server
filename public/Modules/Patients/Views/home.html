@@ -34,9 +34,9 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
-                <tr dir-paginate="user in users|orderBy:'p_id':reverse|filter:search|itemsPerPage:15| filter:{p_active: true}" ng-controller="singlePatientCtrl">
-
+            <tbody ng-controller="singlePatientCtrl">
+                <!-- <tr dir-paginate="user in users|orderBy:'p_id':reverse|filter:search|itemsPerPage:15| filter:{p_active: true}" ng-controller="singlePatientCtrl"> -->
+                <tr dir-paginate="user in users|orderBy:sortKey:reverse|filter:search|itemsPerPage:15| filter:{p_active: true}" pagination-id="paginate1">
                     <td>{{user.p_id}}</td>
                     <td>{{user.p_first_name}}</td>
                     <td>{{user.p_last_name}}</td>
@@ -78,7 +78,8 @@
             </tbody>
         </table> 
         <dir-pagination-controls
-            max-size="15"
+            pagination-id="paginate1"
+            max-size="150"
             direction-links="true"
             boundary-links="true" >
         </dir-pagination-controls>
@@ -89,20 +90,20 @@
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <th ng-click="sort('p_id')">Id
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort1('p_id')">Id
+                        <span class="glyphicon sort-icon" ng-show="sortKey1=='p_id'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('p_first_name')">First Name
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_first_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort1('p_first_name')">First Name
+                        <span class="glyphicon sort-icon" ng-show="sortKey1=='p_first_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('p_last_name')">Last Name
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_last_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort1('p_last_name')">Last Name
+                        <span class="glyphicon sort-icon" ng-show="sortKey1=='p_last_name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('p-dob')">Date of Birth
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_dob'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort1('p-dob')">Date of Birth
+                        <span class="glyphicon sort-icon" ng-show="sortKey1=='p_dob'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
-                    <th ng-click="sort('p_program')">Program
-                        <span class="glyphicon sort-icon" ng-show="sortKey=='p_program'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    <th ng-click="sort1('p_program')">Program
+                        <span class="glyphicon sort-icon" ng-show="sortKey1=='p_program'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
                     </th>
                     <th></th>
                     <th></th>
@@ -111,7 +112,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="info" dir-paginate="user in users|orderBy:'p_id':reverse|filter:search|itemsPerPage:15|filter:{p_active: false}" ng-controller="singlePatientCtrl">
+                <tr class="info" dir-paginate="user in users|orderBy:sortKey1:reverse1|filter:search|itemsPerPage:15|filter:{p_active: false}" ng-controller="singlePatientCtrl" pagination-id="paginate2">
 
                     <td>{{user.p_id}}</td>
                     <td>{{user.p_first_name}}</td>
@@ -144,6 +145,7 @@
             </tbody>
         </table> 
         <dir-pagination-controls
+            pagination-id="paginate2"
             max-size="15"
             direction-links="true"
             boundary-links="true" >

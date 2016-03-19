@@ -1,0 +1,26 @@
+  <div ng-controller="singlePatientCtrl" class="modal-fade">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">EXPORT</h4>
+          </div>
+          <div class="modal-body">
+                <form class="form-horizontal" role="form" name="pdfForm">
+                  <div class="form-group">
+                    <label class="control-label  col-sm-3">Start Date :</label>
+                    <div class="col-sm-4">
+                      <input type="date" class="form-control" name="startDate" ng-model="startDate" required>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label  col-sm-3">End Date :</label>
+                    <div class="col-sm-4">
+                      <input type="date" class="form-control" name="endDate" ng-model="endDate" required>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-save" ng-click="generatePdf(startDate, endDate)"
+                    data-dismiss="modal" >Export</button>
+          </div>
+        </div>

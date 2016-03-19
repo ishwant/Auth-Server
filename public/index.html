@@ -28,6 +28,7 @@
         }
         th, td {
             padding: 5px;
+            /*text-transform: capitalize;*/
         }
         .box {
             height:148px;
@@ -56,25 +57,7 @@
         {
         opacity: 0.4;
         }
-        
-        p.cat{
-          text-align: center;
-          padding-top:10px;
-          font-size: 150%;
-          color: #FFFFFF;
-        }
-        p.amount {
-            text-align:center;
-            margin-top:-9px;
-            font-weight: bold;
-            font-size: 100%;
-        }
-        p.balance {
-            text-align:center;
-            margin-top:20px;
-            font-weight: bold;
-            font-size: 150%;
-        }
+
         
         <!-- For the button and search field on main page -->
         input {
@@ -106,15 +89,26 @@
 
     <!-- Nav bar start -->
     <span ng-show="currentUser">
-        <nav class="navbar navbar-inverse" ng-controller="NavCtrl">
+        <nav class="navbar navbar-default" ng-controller="NavCtrl">
             <div class="container-fluid">
                 <div class="navbar-header">
+                    <a class="navbar-brand" href="#/home">
+                        <img alt="Brand" src="img/G2L MOBILE BUDDY.PNG" height="30" width="45" >
+                    </a>
                 </div>
                 
                 <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#/home">
+                            <b>G2L BUDDY!</b>
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="nav navbar-nav navbar-right">
                     <li ng-class="{active: isActive('/home')}">
                         <a href="#/home">
-                            <span class="glyphicon glyphicon-home" style="color: #0066ff"></span> 
+                            <span class="glyphicon glyphicon-home" style="color: #006dcc"></span> 
                             <b>HOME</b>
                         </a>
                     </li>
@@ -138,10 +132,6 @@
                             <b>ADMINS</b>
                         </a>
                     </li>
-
-                </ul>
-                
-                <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a ng-click="logout()">
                             <b>Logout</b>

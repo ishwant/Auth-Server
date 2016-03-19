@@ -38,6 +38,10 @@
                 $scope.sortKey = keyname;   //set the sortKey to the param passed
                 $scope.reverse = !$scope.reverse; //if true make it false and vice versa
             };
+            $scope.sort1 = function(keyname){
+                $scope.sortKey1 = keyname;   //set the sortKey to the param passed
+                $scope.reverse1 = !$scope.reverse1; //if true make it false and vice versa
+            };
         }
     ]);
 
@@ -110,7 +114,8 @@
         '$http',
         '$location', 
         '$routeParams',
-        function ($scope, $rootScope, $http, $location, $routeParams) {
+        '$modal',
+        function ($scope, $rootScope, $http, $location, $routeParams,$modal) {
 
             $scope.array = [];
             $scope.array_ = angular.copy($scope.array);
@@ -125,6 +130,10 @@
             $scope.sort = function(keyname){
                 $scope.sortKey = keyname;   //set the sortKey to the param passed
                 $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+            };
+            $scope.sort1 = function(keyname){
+                $scope.sortKey1 = keyname;   //set the sortKey to the param passed
+                $scope.reverse1 = !$scope.reverse1; //if true make it false and vice versa
             };
         
             //=======REGISTER A PATIENT===================
@@ -352,6 +361,8 @@
                 */
                     $scope.p_first_name = data.p_first_name;
                     $scope.p_last_name = data.p_last_name;
+                    $rootScope.p_first_name = data.p_first_name;
+                    $rootScope.p_last_name = data.p_last_name;
                     $scope.p_dob = data.p_dob;
                     $scope.p_program = data.p_program; 
                     $scope.p_event_entries = data.p_event_entries;
@@ -360,11 +371,28 @@
                 
                 });
             };
-            $scope.generatePdf= function(entries){
-
+            $scope.open = function (entries) {
+                $rootScope.entries = entries;
+                console.log($rootScope.entries);
+                $modal.open({
+                    templateUrl: 'Modules/Patients/Views/pdfModal.html',
+                });
+            };
+            $scope.generatePdf= function(sdate, edate){
+                console.log("hello");
+                console.log("sdate %s", sdate);
+                console.log("edate %s", edate);
+                console.log("entries %s", $rootScope.entries);
+                var entries = $rootScope.entries;
+                var start = new Date(sdate);
+                var end = new Date(edate);
                 var rows =[];
                 for(var i=0;i<entries.length;i++){
-                    $scope.temp =[];
+                    console.log(entries[i].event_timestamp);
+                    var eventDate = new Date(entries[i].event_timestamp);
+                    if((eventDate<=end)&&(eventDate>=start)){
+                        console.log("Entering");
+                        $scope.temp =[];
                     $scope.temp.date = entries[i].event_timestamp;
                     $scope.temp.category = entries[i].category;
                     $scope.temp.info = entries[i].event_name;
@@ -390,7 +418,9 @@
                     else if(entries[i].category=="Note"){
                         $scope.temp.amount = entries[i].event_notes;
                     }
-                    rows.push($scope.temp);                    
+                    rows.push($scope.temp); 
+                    }
+                                       
                 }
                 var columns = [
                     {title: "Date", dataKey: "date"},
@@ -401,7 +431,7 @@
                     {title: "Details", dataKey: "details"},
                     {title: "Message", dataKey: "message"}, 
                 ];
-                var head = "Patient Report : " + $scope.p_first_name+" "+$scope.p_last_name+" (ID = "+$scope.p_id+")";
+                var head = "Patient Report : " + $rootScope.p_first_name+" "+$rootScope.p_last_name+" (ID = "+$rootScope.p_id+")";
                 // Only pt supported (not mm or in)
                 var doc = new jsPDF('p', 'pt');
                 doc.autoTable(columns, rows, {
@@ -412,6 +442,11 @@
                 });
                 var filename = $scope.p_first_name+" "+$scope.p_last_name+" (ID = "+$scope.p_id+").pdf";
                 doc.save(filename);
+            
+
+
+
+
             //     console.log(entries);
             //     var doc = new jsPDF();
             //     doc.setFontSize(40);
@@ -435,7 +470,7 @@
             //     doc.save('Test.pdf'); 
 
 
-            }
+            }        
         }
     ]);
 })();

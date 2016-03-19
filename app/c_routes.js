@@ -35,11 +35,11 @@ module.exports = function(app) {
 	app.post('/registerCaseWorker', auth,function(req, res) {
 		var newcaseWorker = new caseWorker();
 
-		newcaseWorker.c_id = req.body.c_id;
-		newcaseWorker.c_first_name = req.body.c_first_name;
-		newcaseWorker.c_last_name = req.body.c_last_name;
+		newcaseWorker.c_id = req.body.c_id.toLowerCase();
+		newcaseWorker.c_first_name = req.body.c_first_name.toLowerCase();
+		newcaseWorker.c_last_name = req.body.c_last_name.toLowerCase();
 		newcaseWorker.c_mobile_contact = req.body.c_mobile_contact;
-		newcaseWorker.c_email = req.body.c_email;
+		newcaseWorker.c_email = req.body.c_email.toLowerCase();
 		newcaseWorker.c_active = true;
 
 		var token = generateToken();

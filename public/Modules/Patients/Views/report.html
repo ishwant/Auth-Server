@@ -24,9 +24,10 @@
                 <input type="text" ng-model="searchText" class="form-control" placeholder="Search"> 
                     <i class="glyphicon glyphicon-search form-control-feedback"></i>
             </div>
-                <input class="btn btn-primary" style="width:60px; margin-left:10px;" ng-click='generatePdf(p_event_entries)' value="PDF">
+                <input class="btn btn-primary" style="width:60px; margin-left:10px;"  value="PDF" ng-click="open(p_event_entries)">
                 <input class="btn btn-primary" style="width:60px;" ng-csv="p_event_entries" csv-header="['Date', 'Type', 'Info', 'Amount', 'Notes', 'Details']" filename="{{p_id}}_{{p_first_name}}{{p_last_name}}.csv" value="CSV">
-       <!--          <span class="glyphicon glyphicon-share-alt"></span> -->
+       <!--          <span class="glyphicon glyphicon-share-alt"></span> 
+   ng-click='generatePdf(p_event_entries)'-->
         </form>
     </div >
         <table class="table table-bordered table-striped table-hover" id="reportTable">
