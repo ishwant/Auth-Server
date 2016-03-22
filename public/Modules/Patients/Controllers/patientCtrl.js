@@ -396,7 +396,12 @@
                     $scope.temp.date = entries[i].event_timestamp;
                     $scope.temp.category = entries[i].category;
                     $scope.temp.info = entries[i].event_name;
-                    $scope.temp.notes = entries[i].event_notes;
+                    if(entries[i].event_notes==null){
+                        $scope.temp.notes = " ";
+                    }
+                    else{
+                        $scope.temp.notes = entries[i].event_notes;
+                    }
                     $scope.temp.details = entries[i].event_details;
                     $scope.temp.message = entries[i].message;
                     if(entries[i].category=="Medication"){
